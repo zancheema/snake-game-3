@@ -7,12 +7,21 @@
     android:orientation="vertical"
     tools:context=".signup.SignUpFragment">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
+    <androidx.cardview.widget.CardView
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/app_logo" />
+        android:layout_width="wrap_content"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="0dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivProfilePic"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/app_logo" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:layout_width="match_parent"
@@ -42,11 +51,11 @@
                 app:startIconDrawable="@drawable/ic_baseline_person_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editUserName"
+                    android:id="@+id/etUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:hint="@string/username" />
+                    android:hint="@string/enter_username" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,7 +68,7 @@
                 app:startIconDrawable="@drawable/ic_baseline_email_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEmail"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -79,7 +88,7 @@
                 app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editPassword"
+                    android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -98,7 +107,7 @@
                 app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/confirmPassword"
+                    android:id="@+id/etConfirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -107,6 +116,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btnSignup"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -152,10 +162,10 @@
                     android:text="@string/have_already_account" />
 
                 <TextView
-                    android:id="@+id/signUpText"
+                    android:id="@+id/loginText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/signUp"
+                    android:text="@string/login"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

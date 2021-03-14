@@ -12,7 +12,9 @@
     <string name="signUp">Sign Up</string>
     <string name="create_an_account">Create An Account</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="username">Username</string>
+    <string name="enter_username">Enter Username</string>
     <string name="sign_up_with_social_media">Sign Up with social media</string>
     <string name="have_already_account">Have already account? </string>
+    <string name="enter_correct_email">Enter Email in a Correct Format</string>
+    <string name="password_mismatch">Password Not Consistent</string>
 </resources>

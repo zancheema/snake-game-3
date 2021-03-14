@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.android.socialnetwork"
-        minSdkVersion 21
+        minSdkVersion 25
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -44,8 +44,14 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    // Firebase
     implementation platform('com.google.firebase:firebase-bom:26.7.0')
     implementation 'com.google.firebase:firebase-auth-ktx:20.0.2'
+    implementation 'com.google.firebase:firebase-database:19.4.0'
+    implementation 'com.firebaseui:firebase-ui-storage:6.3.0'
+
+    //circular image view
+    implementation 'com.mikhaellopez:circularimageview:4.2.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

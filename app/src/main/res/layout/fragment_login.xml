@@ -124,10 +124,10 @@
                     android:text="@string/dont_have_account" />
 
                 <TextView
-                    android:id="@+id/loginText"
+                    android:id="@+id/signUpText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/login"
+                    android:text="@string/signUp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
