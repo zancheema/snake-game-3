@@ -2,9 +2,12 @@ package com.example.android.socialnetwork
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +18,24 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
-        findViewById<BottomNavigationView>(R.id.bottomNav)
-            .setupWithNavController(navController)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        bottomNav.setupWithNavController(navController)
+
+        /** show login if not logged in */
+        if (Firebase.auth.currentUser == null) {
+            navController.navigate(R.id.action_global_loginFragment)
+        }
+
+        /** observe currently showing fragment */
+        navController.addOnDestinationChangedListener {
+            _, destination, _ ->
+            run {
+                if (destination.id == R.id.loginFragment) {
+                    bottomNav.visibility = View.GONE
+                } else {
+                    bottomNav.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }

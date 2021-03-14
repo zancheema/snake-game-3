@@ -2,4 +2,12 @@
     <string name="app_name">Fiverr Order 3</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="dont_have_account">Don\'t Have An Account? </string>
+    <string name="login">Login</string>
+    <string name="login_with_social_media">Login with social media</string>
+    <string name="signUp">Sign Up</string>
 </resources>
