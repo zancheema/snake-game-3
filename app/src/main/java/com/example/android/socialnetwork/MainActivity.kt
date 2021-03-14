@@ -27,10 +27,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         /** observe currently showing fragment */
-        navController.addOnDestinationChangedListener {
-            _, destination, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             run {
-                if (destination.id == R.id.loginFragment) {
+                if (destination.id == R.id.loginFragment || destination.id == R.id.signUpFragment) {
                     bottomNav.visibility = View.GONE
                 } else {
                     bottomNav.visibility = View.VISIBLE
