@@ -1,15 +1,18 @@
 package com.example.android.socialnetwork.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+
 
 class HomeFragment : Fragment() {
 
@@ -30,6 +33,12 @@ class HomeFragment : Fragment() {
             if (Firebase.auth.currentUser == null) {
                 findNavController().navigate(R.id.action_global_loginFragment)
             }
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .build()
+            val googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+            googleSignInClient.signOut()
         }
     }
 }

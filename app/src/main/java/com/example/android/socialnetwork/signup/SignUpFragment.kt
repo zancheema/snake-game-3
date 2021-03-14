@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.NodeNames
@@ -95,8 +95,8 @@ class SignUpFragment : Fragment() {
     //result of obtaining permission code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==101){
-            if(resultCode== Activity.RESULT_OK){
+        if (requestCode == 101) {
+            if (resultCode == Activity.RESULT_OK) {
                 localFileUri = data?.data!!
                 ivProfilePic.setImageURI(localFileUri)
             }
@@ -104,26 +104,40 @@ class SignUpFragment : Fragment() {
     }
 
     //Request permission to read external storage
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if(requestCode==102){
-            if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        if (requestCode == 102) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 startActivityForResult(intent, 101)
-            }else{
-                Toast.makeText(requireContext(), "Access Permission Required", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Access Permission Required", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     //When the profile picture is being set
     fun pickProfilePicture() {
-        if(ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, 101)
-        }else{
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 102)
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                102
+            )
         }
     }
 
@@ -134,19 +148,34 @@ class SignUpFragment : Fragment() {
         password = etPassword.text.toString().trim()
         confirmPassword = etConfirmPassword.text.toString().trim()
 
-        if(username == ""){
-            Toast.makeText(requireContext(), getString(R.string.enter_username), Toast.LENGTH_SHORT).show()
-        }else if(email == ""){
-            Toast.makeText(requireContext(), getString(R.string.enter_email), Toast.LENGTH_SHORT).show()
-        }else if(password == ""){
-            Toast.makeText(requireContext(), getString(R.string.enter_password), Toast.LENGTH_SHORT).show()
-        }else if(confirmPassword == ""){
-            Toast.makeText(requireContext(), getString(R.string.confirm_password), Toast.LENGTH_SHORT).show()
-        }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            Toast.makeText(requireContext(), getString(R.string.enter_correct_email), Toast.LENGTH_SHORT).show()
-        }else if(password != confirmPassword){
-            Toast.makeText(requireContext(), getString(R.string.password_mismatch), Toast.LENGTH_SHORT).show()
-        }else{
+        if (username == "") {
+            Toast.makeText(requireContext(), getString(R.string.enter_username), Toast.LENGTH_SHORT)
+                .show()
+        } else if (email == "") {
+            Toast.makeText(requireContext(), getString(R.string.enter_email), Toast.LENGTH_SHORT)
+                .show()
+        } else if (password == "") {
+            Toast.makeText(requireContext(), getString(R.string.enter_password), Toast.LENGTH_SHORT)
+                .show()
+        } else if (confirmPassword == "") {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.confirm_password),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.enter_correct_email),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else if (password != confirmPassword) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.password_mismatch),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
 //            progressBar.visibility = View.VISIBLE
 
             mAuth.createUserWithEmailAndPassword(email, password)
@@ -156,42 +185,47 @@ class SignUpFragment : Fragment() {
                     if (task.isSuccessful) {
                         firebaseUser = mAuth.currentUser!!
 
-                        if(localFileUri!=null){
+                        if (localFileUri != null) {
                             updateNameAndProfilePhoto()
-                        }else {
+                        } else {
                             updateOnlyName()
                         }
                     }
                 }.addOnFailureListener { exception ->
-                    Toast.makeText(requireContext(), "Fail to create user: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Fail to create user: ${exception.localizedMessage}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
         }
 
     }
 
     //Save username and profile photo information to firebase
-    private fun updateNameAndProfilePhoto(){
+    private fun updateNameAndProfilePhoto() {
         val strFileName: String = firebaseUser.uid + ".jpg"
 
-        val fileReference: StorageReference = fileStorage.child("images/"+strFileName)
+        val fileReference: StorageReference = fileStorage.child("images/" + strFileName)
 
 //        progressBar.visibility = View.VISIBLE
         fileReference.putFile(localFileUri!!)
-            .addOnCompleteListener{ task ->
+            .addOnCompleteListener { task ->
 //                progressBar.visibility = View.GONE
-                if(task.isSuccessful){
+                if (task.isSuccessful) {
                     fileReference.downloadUrl
                         .addOnSuccessListener {
                             serverFileUri = it
 
-                            val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
-                                .setDisplayName(etUsername.text.toString().trim())
-                                .setPhotoUri(serverFileUri)
-                                .build()
+                            val request: UserProfileChangeRequest =
+                                UserProfileChangeRequest.Builder()
+                                    .setDisplayName(etUsername.text.toString().trim())
+                                    .setPhotoUri(serverFileUri)
+                                    .build()
 
                             firebaseUser.updateProfile(request)
                                 .addOnCompleteListener { task ->
-                                    if(task.isSuccessful){
+                                    if (task.isSuccessful) {
                                         val userID: String = firebaseUser.uid
                                         databaseReference =
                                             FirebaseDatabase.getInstance().reference.child("RealTimeChat2")
@@ -201,15 +235,20 @@ class SignUpFragment : Fragment() {
 
                                         val hashMap: HashMap<String, String> = HashMap()
 
-                                        hashMap[NodeNames.USERNAME] = etUsername.text.toString().trim()
+                                        hashMap[NodeNames.USERNAME] =
+                                            etUsername.text.toString().trim()
                                         hashMap[NodeNames.EMAIL] = etEmail.text.toString().trim()
                                         hashMap[NodeNames.PHOTO] = serverFileUri.path.toString()
                                         hashMap[NodeNames.ONLINE] = "true"
 
                                         databaseReference.child(userID).setValue(hashMap)
                                             .addOnCompleteListener { task ->
-                                                if(task.isSuccessful) {
-                                                    Toast.makeText(requireContext(), "User Successfully Created!", Toast.LENGTH_SHORT).show()
+                                                if (task.isSuccessful) {
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "User Successfully Created!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
 //                                                    startActivity(Intent(applicationContext, LoginActivity::class.java))
 //                                                    finish()
                                                     findNavController().popBackStack()
@@ -218,7 +257,11 @@ class SignUpFragment : Fragment() {
 
                                     }
                                 }.addOnFailureListener { exception ->
-                                    Toast.makeText(requireContext(), "Fail to update profile: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Fail to update profile: ${exception.localizedMessage}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                         }
                 }
@@ -226,7 +269,7 @@ class SignUpFragment : Fragment() {
     }
 
     //Save only username info to firebase
-    private fun updateOnlyName(){
+    private fun updateOnlyName() {
 //        progressBar.visibility = View.VISIBLE
 
         val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
@@ -236,7 +279,7 @@ class SignUpFragment : Fragment() {
         firebaseUser.updateProfile(request)
             .addOnCompleteListener { task ->
 //                progressBar.visibility = View.GONE
-                if(task.isSuccessful){
+                if (task.isSuccessful) {
                     val userID: String = firebaseUser.uid
                     databaseReference =
                         FirebaseDatabase.getInstance().reference.child("RealTimeChat2").child(
@@ -254,17 +297,24 @@ class SignUpFragment : Fragment() {
                     databaseReference.child(userID).setValue(hashMap)
                         .addOnCompleteListener { task ->
 //                            progressBar.visibility = View.GONE
-                            if(task.isSuccessful) {
-                                Toast.makeText(requireContext(), "User Successfully Created!", Toast.LENGTH_SHORT).show()
-//                                startActivity(Intent(requireContext(), LoginActivity::class.java))
-//                                finish()
+                            if (task.isSuccessful) {
                                 findNavController().popBackStack()
                             }
+                        }.addOnFailureListener { error ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to create user: ${error.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                 }
             }.addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Fail to update profile: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Fail to update profile: ${exception.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
     }
 }

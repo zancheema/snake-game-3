@@ -7,21 +7,17 @@
     android:orientation="vertical"
     tools:context=".signup.SignUpFragment">
 
-    <androidx.cardview.widget.CardView
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/ivProfilePic"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        app:cardCornerRadius="100dp"
-        app:cardElevation="0dp"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/ivProfilePic"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:src="@drawable/app_logo" />
-    </androidx.cardview.widget.CardView>
+        android:layout_marginTop="32dp"
+        android:foregroundGravity="center"
+        android:src="@drawable/app_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="match_parent"
@@ -123,30 +119,6 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/button_bg"
                 android:text="@string/signUp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="@string/sign_up_with_social_media" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/googleSignUpButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/google_orange"
-                    android:elevation="0dp"
-                    android:src="@drawable/google_logo"
-                    app:tint="@color/white" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
