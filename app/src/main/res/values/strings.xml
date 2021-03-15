@@ -17,4 +17,15 @@
     <string name="have_already_account">Have already account? </string>
     <string name="enter_correct_email">Enter Email in a Correct Format</string>
     <string name="password_mismatch">Password Not Consistent</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="dummy_paragraph">
+        Lorem Ipsum is simply dummy text of the printing
+        and typesetting industry. Lorem Ipsum has been the
+        industry\'s standard dummy text ever since the 1500s,
+        when an unknown printer took a galley of type and
+        scrambled
+    </string>
+    <string name="username">johndoe</string>
+    <string name="email">johndoe@email.com</string>
+    <string name="user_handle">/@johndoe</string>
 </resources>
