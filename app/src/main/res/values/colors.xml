@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="theme_blue">#62879E</color>
     <color name="theme_blue_light">#BADAEE</color>
+    <color name="theme_blue_dark">#445F70</color>
     <color name="google_orange">#EA4335</color>
 </resources>
