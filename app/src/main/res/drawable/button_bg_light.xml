@@ -4,14 +4,12 @@
     <item android:state_pressed="true">
         <shape>
             <solid android:color="@color/theme_blue" />
-            <padding android:left="@dimen/button_horizontal_padding" android:right="@dimen/button_horizontal_padding" />
             <corners android:radius="@dimen/button_corner_radius" />
         </shape>
     </item>
     <item android:state_enabled="true">
         <shape>
-            <solid android:color="@color/theme_blue_light" />
-            <padding android:left="@dimen/button_horizontal_padding" android:right="@dimen/button_horizontal_padding" />
+            <solid android:color="@color/button_color_light" />
             <corners android:radius="@dimen/button_corner_radius" />
         </shape>
     </item>

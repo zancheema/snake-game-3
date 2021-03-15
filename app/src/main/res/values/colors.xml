@@ -12,4 +12,5 @@
     <color name="theme_blue_dark">#445F70</color>
     <color name="google_orange">#EA4335</color>
     <color name="light_gray">#C4C4C4</color>
+    <color name="button_color_light">#8CC2E3</color>
 </resources>

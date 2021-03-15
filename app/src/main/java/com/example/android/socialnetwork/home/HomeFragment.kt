@@ -8,6 +8,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
+import com.example.android.socialnetwork.common.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
@@ -29,16 +30,7 @@ class HomeFragment : Fragment() {
 
         view.findViewById<Button>(R.id.bntSignout).setOnClickListener {
             /** only for testing */
-            Firebase.auth.signOut()
-            if (Firebase.auth.currentUser == null) {
-                findNavController().navigate(R.id.action_global_loginFragment)
-            }
-
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .build()
-            val googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-            googleSignInClient.signOut()
+            Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
         }
     }
 }

@@ -27,13 +27,13 @@
         android:text="@string/edit_profile"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/logoutButton"
+        app:layout_constraintEnd_toStartOf="@+id/logoutIcon"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/logoutButton"
+        android:id="@+id/logoutIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_logout"
@@ -53,9 +53,10 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonChangePicture"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:background="@drawable/button_bg_light"
         android:text="@string/change_picture"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfilePic"
@@ -155,6 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/button_bg_light"
+        android:paddingHorizontal="50dp"
         android:text="@string/save_changes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
