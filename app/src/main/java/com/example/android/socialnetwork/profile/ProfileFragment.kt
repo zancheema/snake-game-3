@@ -27,6 +27,7 @@ class ProfileFragment : Fragment() {
     private lateinit var ivProfilePic: ImageView
     private lateinit var email: TextView
     private lateinit var logoutButton: ImageView
+    private lateinit var editProfileButton: Button
 
     private lateinit var localFileUri: Uri
 
@@ -48,6 +49,7 @@ class ProfileFragment : Fragment() {
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         email = view.findViewById(R.id.email)
         logoutButton = view.findViewById(R.id.logoutButton)
+        editProfileButton = view.findViewById(R.id.editProfileButton)
 
         Firebase.auth.currentUser?.let { user ->
             val name = user.displayName?.replace("\\s".toRegex(), "")?.toLowerCase()
@@ -67,6 +69,9 @@ class ProfileFragment : Fragment() {
 
         logoutButton.setOnClickListener {
             btnLogoutClick()
+        }
+        editProfileButton.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
     }
 

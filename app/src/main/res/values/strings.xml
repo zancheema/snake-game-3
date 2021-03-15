@@ -28,4 +28,7 @@
     <string name="username">johndoe</string>
     <string name="email">johndoe@email.com</string>
     <string name="user_handle">/@johndoe</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="sample_password">******</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

@@ -11,4 +11,5 @@
     <color name="theme_blue_light">#BADAEE</color>
     <color name="theme_blue_dark">#445F70</color>
     <color name="google_orange">#EA4335</color>
+    <color name="light_gray">#C4C4C4</color>
 </resources>

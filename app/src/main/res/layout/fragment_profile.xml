@@ -73,10 +73,11 @@
         tools:text="@string/email" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonEditProfile"
+        android:id="@+id/editProfileButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@drawable/button_bg_light"
         android:text="@string/edit_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,8 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="19dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/buttonEditProfile"
-        app:layout_constraintStart_toStartOf="@+id/buttonEditProfile"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEditProfile"
+        app:layout_constraintEnd_toEndOf="@+id/editProfileButton"
+        app:layout_constraintStart_toStartOf="@+id/editProfileButton"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileButton"
         tools:text="@string/dummy_paragraph" />
 </androidx.constraintlayout.widget.ConstraintLayout>
