@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx:20.0.2'
     implementation 'com.google.firebase:firebase-database:19.4.0'
     implementation 'com.firebaseui:firebase-ui-storage:6.3.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
 
     // Google Sign In
     implementation 'com.google.android.gms:play-services-auth:19.0.0'

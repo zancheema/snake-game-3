@@ -24,8 +24,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -47,10 +47,8 @@ class SignUpFragment : Fragment() {
 
     //firebase variables
     private lateinit var mAuth: FirebaseAuth
-
     private lateinit var firebaseUser: FirebaseUser
-    private lateinit var databaseReference: DatabaseReference
-
+    private val usersCollection = Firebase.firestore.collection("users")
     private lateinit var fileStorage: StorageReference
 
     ///TODO removed lateinit, initialize this with null ...
@@ -227,21 +225,15 @@ class SignUpFragment : Fragment() {
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         val userID: String = firebaseUser.uid
-                                        databaseReference =
-                                            FirebaseDatabase.getInstance().reference.child("RealTimeChat2")
-                                                .child(
-                                                    NodeNames.USERS
-                                                )
 
-                                        val hashMap: HashMap<String, String> = HashMap()
-
-                                        hashMap[NodeNames.USERNAME] =
-                                            etUsername.text.toString().trim()
-                                        hashMap[NodeNames.EMAIL] = etEmail.text.toString().trim()
-                                        hashMap[NodeNames.PHOTO] = serverFileUri.path.toString()
-                                        hashMap[NodeNames.ONLINE] = "true"
-
-                                        databaseReference.child(userID).setValue(hashMap)
+                                        // add user in firestore users collection
+                                        val user = mapOf(
+                                            NodeNames.USERNAME to etUsername.text.toString().trim(),
+                                            NodeNames.EMAIL to etEmail.text.toString().trim(),
+                                            NodeNames.PHOTO to serverFileUri.path.toString(),
+                                            NodeNames.ONLINE to "true"
+                                        )
+                                        usersCollection.document(userID).set(user)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     Toast.makeText(
@@ -249,12 +241,16 @@ class SignUpFragment : Fragment() {
                                                         "User Successfully Created!",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
-//                                                    startActivity(Intent(applicationContext, LoginActivity::class.java))
-//                                                    finish()
                                                     findNavController().popBackStack()
                                                 }
                                             }
-
+                                            .addOnFailureListener { error ->
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    "Failed to create user: ${error.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                     }
                                 }.addOnFailureListener { exception ->
                                     Toast.makeText(
@@ -281,33 +277,32 @@ class SignUpFragment : Fragment() {
 //                progressBar.visibility = View.GONE
                 if (task.isSuccessful) {
                     val userID: String = firebaseUser.uid
-                    databaseReference =
-                        FirebaseDatabase.getInstance().reference.child("RealTimeChat2").child(
-                            NodeNames.USERS
-                        )
 
-                    val hashMap: HashMap<String, String> = HashMap()
-
-                    hashMap[NodeNames.USERNAME] = etUsername.text.toString().trim()
-                    hashMap[NodeNames.EMAIL] = etEmail.text.toString().trim()
-                    hashMap[NodeNames.PHOTO] = ""
-                    hashMap[NodeNames.ONLINE] = "true"
-
-//                    progressBar.visibility = View.VISIBLE
-                    databaseReference.child(userID).setValue(hashMap)
+                    // save user to firestore users collection
+                    val user = mapOf(
+                        NodeNames.USERNAME to etUsername.text.toString().trim(),
+                        NodeNames.EMAIL to etEmail.text.toString().trim(),
+                        NodeNames.PHOTO to "",
+                        NodeNames.ONLINE to "true"
+                    )
+                    usersCollection.document(userID).set(user)
                         .addOnCompleteListener { task ->
-//                            progressBar.visibility = View.GONE
                             if (task.isSuccessful) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "User Successfully Created!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 findNavController().popBackStack()
                             }
-                        }.addOnFailureListener { error ->
+                        }
+                        .addOnFailureListener { error ->
                             Toast.makeText(
                                 requireContext(),
                                 "Failed to create user: ${error.message}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(

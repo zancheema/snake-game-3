@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
+import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.common.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,6 +23,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 private const val TAG = "LoginFragment"
@@ -41,6 +43,7 @@ class LoginFragment : Fragment() {
     private lateinit var password: String
 
     private lateinit var auth: FirebaseAuth
+    private val usersCollections = Firebase.firestore.collection("users")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,9 +101,25 @@ class LoginFragment : Fragment() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    val user = auth.currentUser
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                    /**
+                     * Store signed in user to database
+                     *
+                     * Sign up is not needed with Google Login in
+                     * So, all sign up credentials are stored at login
+                     */
+                    auth.currentUser.let { user ->
+                        val userMap = mapOf(
+                            NodeNames.USERNAME to user.displayName.trim(),
+                            NodeNames.EMAIL to user.email.trim(),
+                            NodeNames.PHOTO to user.photoUrl.toString(),
+                            NodeNames.ONLINE to "true"
+                        )
+                        usersCollections.document(user.uid)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            }
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
