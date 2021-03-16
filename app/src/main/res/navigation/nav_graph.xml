@@ -25,10 +25,14 @@
             app:destination="@id/editProfileFragment" />
     </fragment>
     <fragment
-        android:id="@+id/postFragment"
-        android:name="com.example.android.socialnetwork.post.PostFragment"
+        android:id="@+id/recordVideoFragment"
+        android:name="com.example.android.socialnetwork.recordvideo.RecordVideoFragment"
         android:label="fragment_post"
-        tools:layout="@layout/fragment_post" />
+        tools:layout="@layout/fragment_record_video" >
+        <action
+            android:id="@+id/action_recordVideoFragment_to_postFragment"
+            app:destination="@id/postFragment" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.android.socialnetwork.login.LoginFragment"
@@ -58,4 +62,16 @@
         android:name="com.example.android.socialnetwork.editprofile.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.example.android.socialnetwork.post.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post" >
+        <argument
+            android:name="videoPath"
+            app:argType="string" />
+        <argument
+            android:name="videoName"
+            app:argType="string" />
+    </fragment>
 </navigation>

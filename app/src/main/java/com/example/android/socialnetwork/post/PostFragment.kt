@@ -1,43 +1,52 @@
 package com.example.android.socialnetwork.post
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.core.VideoCapture
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
+import com.example.android.socialnetwork.model.Post
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 class PostFragment : Fragment() {
 
-    private var videoCapture: VideoCapture? = null
+    private lateinit var videoPath: String
+    private lateinit var videoName: String
 
-    private var videoIsRecorded = false
-    private var frontCameraEnabled = true
+    private lateinit var etPostTitle: TextView
+    private lateinit var postThumbnail: ImageView
+    private lateinit var buttonPost: Button
+    private lateinit var videoFile: File
 
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var viewFinder: PreviewView
-    private lateinit var startStopRecording: View
-    private lateinit var cameraRotator: View
+    private val postsCollection = Firebase.firestore.collection("posts")
+
+    var mAuth: FirebaseAuth? = null
+    var firebaseDatabase: FirebaseDatabase? = null
+    var myRef: DatabaseReference? = null
+    var mStorageRef: StorageReference? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        videoPath = arguments?.getString("videoPath") ?: ""
+        videoName = arguments?.getString("videoName") ?: System.currentTimeMillis().toString()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,143 +59,74 @@ class PostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewFinder = view.findViewById(R.id.viewFinder)
-        startStopRecording = view.findViewById(R.id.startCamera)
-        cameraRotator = view.findViewById(R.id.rotateCamera)
+        etPostTitle = view.findViewById(R.id.etPostTitle)
+        postThumbnail = view.findViewById(R.id.postVideoThumbnail)
+        buttonPost = view.findViewById(R.id.buttonPost)
+        videoFile = File(videoPath)
 
-        if (allPermissionsGranted()) {
-            startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-        } else {
-            ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        mAuth = FirebaseAuth.getInstance()
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        myRef = firebaseDatabase!!.reference
+        mStorageRef = FirebaseStorage.getInstance().reference
+
+        Glide
+            .with(requireContext())
+            .load(videoFile.toUri())
+            .thumbnail(0.1f)
+            .placeholder(R.drawable.empty_image_thumbnail)
+            .error(R.drawable.empty_image_thumbnail)
+            .into(postThumbnail)
+
+        buttonPost.setOnClickListener {
+            upload()
         }
-
-        startStopRecording.setOnClickListener { recordVideo() }
-        cameraRotator.setOnClickListener { rotateCamera() }
-
-        outputDirectory = getOutputDirectory()
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-            } else {
-                Toast.makeText(
-                    context,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
+    private fun upload() {
+        val userId = Firebase.auth.currentUser.uid
+
+        val storageReference = mStorageRef!!.child("videos/$userId/$videoName")
+        storageReference.putFile(videoFile.toUri()).addOnSuccessListener { taskSnapshot ->
+
+            val newReference = FirebaseStorage.getInstance().getReference("videos/$userId/$videoName")
+            // add post to firestore database to be fetched later in feed
+            newReference.downloadUrl.addOnSuccessListener { uri ->
+                val downloadURL = uri.toString()
+                val user = mAuth!!.currentUser
+
+                val post = Post(
+                    user.displayName!!,
+                    user.email!!,
+                    etPostTitle.text.toString(),
+                    downloadURL
+                )
+                postsCollection.add(post)
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Post added successfully",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        findNavController().popBackStack()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Failed to add post", Toast.LENGTH_SHORT)
+                            .show()
+                        findNavController().popBackStack()
+                    }
+
+            }.addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to Post: ${it.message}", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+
+        }.addOnFailureListener { exception ->
+            if (exception != null) {
+                Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG)
+                    .show()
                 findNavController().popBackStack()
             }
         }
-    }
-
-    private fun rotateCamera() {
-        frontCameraEnabled = if (frontCameraEnabled) {
-            startCamera(CameraSelector.DEFAULT_BACK_CAMERA)
-            false
-        } else {
-            startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-            true
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun recordVideo() {
-        if (videoIsRecorded) {
-            videoCapture?.stopRecording()
-            videoIsRecorded = false
-            return
-        }
-
-        val videoFile = File(
-            outputDirectory,
-            SimpleDateFormat(
-                FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".mp4"
-        )
-
-        videoCapture?.startRecording(
-            videoFile,
-            ContextCompat.getMainExecutor(context),
-            object : VideoCapture.OnVideoSavedCallback {
-                override fun onVideoSaved(file: File) {
-                    val savedUri = Uri.fromFile(file)
-                    val msg = "Video Record succeeded: $savedUri"
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
-                }
-
-                override fun onError(videoCaptureError: Int, message: String, exc: Throwable?) {
-                    Log.e(TAG, "Photo capture failed: $message", exc)
-                }
-            }
-        )
-        videoIsRecorded = true
-    }
-
-    private fun startCamera(cameraSelector: CameraSelector) {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            // Preview
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(viewFinder.createSurfaceProvider())
-                }
-
-
-            videoCapture = VideoCapture.Builder().build()
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, videoCapture
-                )
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-
-        }, ContextCompat.getMainExecutor(context))
-    }
-
-    private fun allPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun getOutputDirectory(): File {
-        val mediaDir = requireActivity().externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else requireActivity().filesDir
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
-    }
-
-
-    companion object {
-        private const val TAG = "CameraXBasic"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS =
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     }
 }

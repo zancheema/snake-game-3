@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 // show or hide bottom navigation with respect to currently displayed fragment
                 if (destination.id == R.id.loginFragment ||
                     destination.id == R.id.signUpFragment ||
-                    destination.id == R.id.postFragment
+                    destination.id == R.id.recordVideoFragment
                 ) {
                     bottomNav.visibility = View.GONE
                 } else {

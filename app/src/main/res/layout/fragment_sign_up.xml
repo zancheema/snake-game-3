@@ -47,7 +47,7 @@
                 app:startIconDrawable="@drawable/ic_baseline_person_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etUsername"
+                    android:id="@+id/etPostTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"

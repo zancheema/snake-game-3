@@ -63,7 +63,7 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        etUsername = view.findViewById(R.id.etUsername)
+        etUsername = view.findViewById(R.id.etPostTitle)
         etEmail = view.findViewById(R.id.etEmail)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         logoutIcon = view.findViewById(R.id.logoutIcon)

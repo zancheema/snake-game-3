@@ -4,44 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".post.PostFragment">
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/cameraOptions"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_options_camera"
-        app:layout_constraintBottom_toBottomOf="@id/startCamera"
-        app:layout_constraintEnd_toStartOf="@+id/startCamera"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/startCamera" />
-
-    <ImageView
-        android:id="@+id/rotateCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_rotate_camera"
-        app:layout_constraintBottom_toBottomOf="@id/startCamera"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/startCamera"
-        app:layout_constraintTop_toTopOf="@+id/startCamera" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonPost">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPostTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/say_something"
+            android:maxLines="7"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
-        android:id="@+id/startCamera"
+        android:id="@+id/postVideoThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+        tools:src="@drawable/empty_image_thumbnail" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_bg_light"
+        android:paddingHorizontal="50dp"
+        android:id="@+id/buttonPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_start_camera"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rotateCamera"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/cameraOptions" />
+        android:text="@string/post"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
