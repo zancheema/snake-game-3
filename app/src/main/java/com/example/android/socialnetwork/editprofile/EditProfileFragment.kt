@@ -76,18 +76,16 @@ class EditProfileFragment : Fragment() {
 
         fileStorage = FirebaseStorage.getInstance().reference
 
-        if (firebaseUser != null) {
-            etUsername.setText(firebaseUser.displayName)
-            etEmail.setText(firebaseUser.email)
-            serverFileUri = firebaseUser.photoUrl
+        etUsername.setText(firebaseUser.displayName)
+        etEmail.setText(firebaseUser.email)
+        serverFileUri = firebaseUser.photoUrl
 
-            if (serverFileUri != null) {
-                Glide.with(this)
-                    .load(serverFileUri)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(ivProfilePic)
-            }
+        if (serverFileUri != null) {
+            Glide.with(this)
+                .load(serverFileUri)
+                .placeholder(R.drawable.ic_baseline_person_24)
+                .error(R.drawable.ic_baseline_person_24)
+                .into(ivProfilePic)
         }
 
         logoutIcon.setOnClickListener {

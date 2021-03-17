@@ -78,7 +78,7 @@
                 android:text="@string/forgot_password" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/loginButton"
+                android:id="@+id/buttonLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -100,9 +100,20 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/googleLoginButton"
+                    android:id="@+id/buttonFacebookLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:backgroundTint="@color/com_facebook_blue"
+                    android:elevation="0dp"
+                    android:src="@drawable/ic_facebook_logo"
+                    app:tint="@color/white" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/buttonGoogleLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
                     android:backgroundTint="@color/google_orange"
                     android:elevation="0dp"
                     android:src="@drawable/google_logo"

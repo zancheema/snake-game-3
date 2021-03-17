@@ -14,12 +14,19 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.common.Utils
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
@@ -32,11 +39,14 @@ private const val RC_SIGN_IN: Int = 0
 class LoginFragment : Fragment() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var callbackManager: CallbackManager
+    private lateinit var loginManager: LoginManager
 
     //variables from xml layout file
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
-    private lateinit var googleSignInButton: FloatingActionButton
+    private lateinit var buttonGoogleSignIn: FloatingActionButton
+    private lateinit var buttonFacebookLogin: FloatingActionButton
 
     //variables for checking info & send info to firebase
     private lateinit var email: String
@@ -56,9 +66,14 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize Facebook Login button
+        callbackManager = CallbackManager.Factory.create()
+        loginManager = LoginManager.getInstance()
+
         etEmail = view.findViewById(R.id.etEmail)
         etPassword = view.findViewById(R.id.etPassword)
-        googleSignInButton = view.findViewById(R.id.googleLoginButton)
+        buttonGoogleSignIn = view.findViewById(R.id.buttonGoogleLogin)
+        buttonFacebookLogin = view.findViewById(R.id.buttonFacebookLogin)
 
         auth = Firebase.auth
 
@@ -72,16 +87,42 @@ class LoginFragment : Fragment() {
         view.findViewById<TextView>(R.id.signUpText).setOnClickListener {
             findNavController().navigate(R.id.signUpFragment)
         }
-        view.findViewById<Button>(R.id.loginButton).setOnClickListener {
+        view.findViewById<Button>(R.id.buttonLogin).setOnClickListener {
             btnLoginClick()
         }
-        googleSignInButton.setOnClickListener {
+        buttonGoogleSignIn.setOnClickListener {
             googleSignIn()
+        }
+        loginManager.registerCallback(callbackManager, object :
+            FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                Log.d(TAG, "facebook:onSuccess:$loginResult")
+                handleFacebookAccessToken(loginResult.accessToken)
+            }
+
+            override fun onCancel() {
+                Log.d(TAG, "facebook:onCancel")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.d(TAG, "facebook:onError", error)
+            }
+        })
+        buttonFacebookLogin.setOnClickListener {
+            Log.d(TAG, "facebook login button: clicked")
+            loginManager.logInWithReadPermissions(
+                this,
+                listOf("email", "public_profile")
+            )
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        // Pass the activity result back to the Facebook SDK
+        Log.d(TAG, "onActivityResult: called")
+        callbackManager.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -96,30 +137,33 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun handleFacebookAccessToken(token: AccessToken) {
+        Log.d(TAG, "handleFacebookAccessToken:$token")
+
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    saveUserDataAndOpenFeed()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Toast.makeText(
+                        context, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    /**
-                     * Store signed in user to database
-                     *
-                     * Sign up is not needed with Google Login in
-                     * So, all sign up credentials are stored at login
-                     */
-                    auth.currentUser.let { user ->
-                        val userMap = mapOf(
-                            NodeNames.USERNAME to user.displayName.trim(),
-                            NodeNames.EMAIL to user.email.trim(),
-                            NodeNames.PHOTO to user.photoUrl.toString(),
-                            NodeNames.ONLINE to "true"
-                        )
-                        usersCollections.document(user.uid)
-                            .set(userMap)
-                            .addOnSuccessListener {
-                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                            }
-                    }
+                    saveUserDataAndOpenFeed()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -131,6 +175,28 @@ class LoginFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    /**
+     * Store signed in user to database
+     *
+     * Sign up is not needed with Google Login in
+     * So, all sign up credentials are stored at login
+     */
+    private fun saveUserDataAndOpenFeed() {
+        auth.currentUser.let { user ->
+            val userMap = mapOf(
+                NodeNames.USERNAME to user.displayName.trim(),
+                NodeNames.EMAIL to user.email.trim(),
+                NodeNames.PHOTO to user.photoUrl.toString(),
+                NodeNames.ONLINE to "true"
+            )
+            usersCollections.document(user.uid)
+                .set(userMap)
+                .addOnSuccessListener {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }
+        }
     }
 
     private fun googleSignIn() {

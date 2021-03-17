@@ -54,6 +54,8 @@ dependencies {
 
     // Google Sign In
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    // Facebook Login
+    implementation 'com.facebook.android:facebook-login:[8,9)'
 
     // Circular image view
     implementation 'com.mikhaellopez:circularimageview:4.2.0'

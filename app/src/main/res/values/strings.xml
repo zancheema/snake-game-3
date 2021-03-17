@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Fiverr Order 3</string>
+    <string name="facebook_app_id">214854450396015</string>
+    <string name="fb_login_protocol_scheme">fb214854450396015</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcome_back">Welcome Back</string>
