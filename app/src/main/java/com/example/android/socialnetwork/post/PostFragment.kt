@@ -27,6 +27,7 @@ class PostFragment : Fragment() {
     private lateinit var videoName: String
 
     private lateinit var etPostTitle: TextView
+    private lateinit var etPostDescription: TextView
     private lateinit var videoViewPost: VideoView
     private lateinit var buttonPost: Button
     private lateinit var videoFile: File
@@ -54,6 +55,7 @@ class PostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         etPostTitle = view.findViewById(R.id.etPostTitle)
+        etPostDescription = view.findViewById(R.id.etPostDescription)
         videoViewPost = view.findViewById(R.id.videoViewPost)
         buttonPost = view.findViewById(R.id.buttonPost)
         videoFile = File(videoPath)
@@ -86,9 +88,11 @@ class PostFragment : Fragment() {
 
                 val post = Post(
                     user.displayName!!,
+                    user.photoUrl?.toString() ?: "",
                     user.email!!,
+                    downloadURL,
                     etPostTitle.text.toString(),
-                    downloadURL
+                    etPostDescription.text.toString()
                 )
                 postsCollection.add(post)
                     .addOnSuccessListener {
