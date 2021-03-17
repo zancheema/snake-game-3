@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.NodeNames
+import com.example.android.socialnetwork.model.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -227,11 +228,10 @@ class SignUpFragment : Fragment() {
                                         val userID: String = firebaseUser.uid
 
                                         // add user in firestore users collection
-                                        val user = mapOf(
-                                            NodeNames.USERNAME to etUsername.text.toString().trim(),
-                                            NodeNames.EMAIL to etEmail.text.toString().trim(),
-                                            NodeNames.PHOTO to serverFileUri.path.toString(),
-                                            NodeNames.ONLINE to "true"
+                                        val user = User(
+                                            etUsername.text.toString().trim(),
+                                            etEmail.text.toString().trim(),
+                                            serverFileUri.path.toString()
                                         )
                                         usersCollection.document(userID).set(user)
                                             .addOnCompleteListener { task ->
@@ -279,11 +279,10 @@ class SignUpFragment : Fragment() {
                     val userID: String = firebaseUser.uid
 
                     // save user to firestore users collection
-                    val user = mapOf(
-                        NodeNames.USERNAME to etUsername.text.toString().trim(),
-                        NodeNames.EMAIL to etEmail.text.toString().trim(),
-                        NodeNames.PHOTO to "",
-                        NodeNames.ONLINE to "true"
+                    val user = User(
+                        etUsername.text.toString().trim(),
+                        etEmail.text.toString().trim(),
+                        ""
                     )
                     usersCollection.document(userID).set(user)
                         .addOnCompleteListener { task ->

@@ -12,15 +12,15 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/app_logo"
-        app:layout_constraintBottom_toBottomOf="@+id/userName"
-        app:layout_constraintEnd_toStartOf="@+id/userName"
+        app:layout_constraintBottom_toBottomOf="@+id/tvUsername"
+        app:layout_constraintEnd_toStartOf="@+id/tvUsername"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/userName" />
+        app:layout_constraintTop_toTopOf="@+id/tvUsername" />
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -36,11 +36,11 @@
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_logout"
-        app:layout_constraintBottom_toBottomOf="@+id/userName"
+        app:layout_constraintBottom_toBottomOf="@+id/tvUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/userName"
-        app:layout_constraintTop_toTopOf="@+id/userName" />
+        app:layout_constraintStart_toEndOf="@+id/tvUsername"
+        app:layout_constraintTop_toTopOf="@+id/tvUsername" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/ivProfilePic"
@@ -52,25 +52,25 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
-        android:id="@+id/profileName"
+        android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/email"
+        app:layout_constraintBottom_toTopOf="@+id/tvEmail"
         app:layout_constraintStart_toEndOf="@+id/ivProfilePic"
         app:layout_constraintTop_toTopOf="@+id/ivProfilePic"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@string/username" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/tvEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfilePic"
-        app:layout_constraintStart_toStartOf="@+id/profileName"
-        app:layout_constraintTop_toBottomOf="@+id/profileName"
+        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:text="@string/email" />
 
     <androidx.appcompat.widget.AppCompatButton

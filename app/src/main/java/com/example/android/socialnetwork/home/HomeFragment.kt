@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +38,12 @@ class HomeFragment : Fragment() {
 
         postFeed = view.findViewById(R.id.postFeed)
         logoutIcon = view.findViewById(R.id.logoutIcon)
-        val postFeedAdapter = PostFeedListAdapter()
+        val postFeedAdapter = PostFeedListAdapter { userUid ->
+            val args = bundleOf(
+                "userUid" to userUid
+            )
+            findNavController().navigate(R.id.action_homeFragment_to_otherProfileFragment, args)
+        }
         postFeed.adapter = postFeedAdapter
 
         postsCollection

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.common.Utils
+import com.example.android.socialnetwork.model.User
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -184,15 +185,14 @@ class LoginFragment : Fragment() {
      * So, all sign up credentials are stored at login
      */
     private fun saveUserDataAndOpenFeed() {
-        auth.currentUser.let { user ->
-            val userMap = mapOf(
-                NodeNames.USERNAME to user.displayName.trim(),
-                NodeNames.EMAIL to user.email.trim(),
-                NodeNames.PHOTO to user.photoUrl.toString(),
-                NodeNames.ONLINE to "true"
+        auth.currentUser.let { firebaseUser ->
+            val user = User(
+                firebaseUser.displayName.trim(),
+                firebaseUser.email.trim(),
+                firebaseUser.photoUrl.toString(),
             )
-            usersCollections.document(user.uid)
-                .set(userMap)
+            usersCollections.document(firebaseUser.uid)
+                .set(user)
                 .addOnSuccessListener {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }

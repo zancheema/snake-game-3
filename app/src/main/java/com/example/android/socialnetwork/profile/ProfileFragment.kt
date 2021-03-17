@@ -46,10 +46,10 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        userName = view.findViewById(R.id.userName)
-        profileName = view.findViewById(R.id.profileName)
+        userName = view.findViewById(R.id.tvUsername)
+        profileName = view.findViewById(R.id.tvProfileName)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
-        email = view.findViewById(R.id.email)
+        email = view.findViewById(R.id.tvEmail)
         logoutIcon = view.findViewById(R.id.logoutIcon)
         editProfileButton = view.findViewById(R.id.editProfileButton)
 

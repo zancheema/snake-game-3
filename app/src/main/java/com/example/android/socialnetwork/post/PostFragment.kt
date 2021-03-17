@@ -80,13 +80,15 @@ class PostFragment : Fragment() {
         val storageReference = mStorageRef!!.child("videos/$userId/$videoName")
         storageReference.putFile(videoFile.toUri()).addOnSuccessListener {
 
-            val newReference = FirebaseStorage.getInstance().getReference("videos/$userId/$videoName")
+            val newReference =
+                FirebaseStorage.getInstance().getReference("videos/$userId/$videoName")
             // add post to firestore database to be fetched later in feed
             newReference.downloadUrl.addOnSuccessListener { uri ->
                 val downloadURL = uri.toString()
                 val user = mAuth!!.currentUser!!
 
                 val post = Post(
+                    user.uid,
                     user.displayName!!,
                     user.photoUrl?.toString() ?: "",
                     user.email!!,
@@ -111,7 +113,11 @@ class PostFragment : Fragment() {
                     }
 
             }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to Post: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to Post: ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 findNavController().popBackStack()
             }
 

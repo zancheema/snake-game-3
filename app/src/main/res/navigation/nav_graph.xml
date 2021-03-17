@@ -9,7 +9,11 @@
         android:id="@+id/homeFragment"
         android:name="com.example.android.socialnetwork.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.android.socialnetwork.notification.NotificationFragment"
@@ -72,6 +76,15 @@
             app:argType="string" />
         <argument
             android:name="videoName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/otherProfileFragment"
+        android:name="com.example.android.socialnetwork.otherprofile.OtherProfileFragment"
+        android:label="fragment_other_profile"
+        tools:layout="@layout/fragment_other_profile" >
+        <argument
+            android:name="userUid"
             app:argType="string" />
     </fragment>
 </navigation>
