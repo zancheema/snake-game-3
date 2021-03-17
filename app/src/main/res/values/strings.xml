@@ -39,4 +39,6 @@
     <string name="sample_post_title">Check out my new website</string>
     <string name="sample_post_time">9 mins ago</string>
     <string name="feed">Feed</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="message">Message</string>
 </resources>

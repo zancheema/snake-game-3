@@ -5,16 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".profile.ProfileFragment">
-
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/ivProfilePic"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+    tools:context=".otherprofile.OtherProfileFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -51,6 +42,15 @@
         app:layout_constraintStart_toEndOf="@+id/userName"
         app:layout_constraintTop_toTopOf="@+id/userName" />
 
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/ivProfilePic"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_baseline_person_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
     <TextView
         android:id="@+id/profileName"
         android:layout_width="wrap_content"
@@ -74,23 +74,37 @@
         tools:text="@string/email" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/editProfileButton"
-        android:layout_width="0dp"
+        android:id="@+id/buttonAddFriend"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/button_bg_light"
-        android:text="@string/edit_profile"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/add_friend"
+        app:layout_constraintEnd_toStartOf="@+id/buttonMessage"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivProfilePic" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonMessage"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_gray_bg"
+        android:text="@string/message"
+        android:textColor="@color/black"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonAddFriend"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonAddFriend" />
+
     <TextView
-        android:id="@+id/profileBio"
+        android:id="@+id/tvUserDescription"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/editProfileButton"
-        app:layout_constraintStart_toStartOf="@+id/editProfileButton"
-        app:layout_constraintTop_toBottomOf="@+id/editProfileButton"
-        tools:text="@string/dummy_paragraph" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:text="@string/dummy_paragraph"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddFriend" />
 </androidx.constraintlayout.widget.ConstraintLayout>
