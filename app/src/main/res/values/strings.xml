@@ -31,6 +31,7 @@
     <string name="change_picture">Change Picture</string>
     <string name="sample_password">******</string>
     <string name="save_changes">Save Changes</string>
-    <string name="say_something">Say something...</string>
+    <string name="title">Title</string>
     <string name="post">Post</string>
+    <string name="description">Description</string>
 </resources>

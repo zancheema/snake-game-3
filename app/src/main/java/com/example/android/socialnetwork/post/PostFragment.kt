@@ -5,19 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Post
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -30,16 +27,13 @@ class PostFragment : Fragment() {
     private lateinit var videoName: String
 
     private lateinit var etPostTitle: TextView
-    private lateinit var postThumbnail: ImageView
+    private lateinit var videoViewPost: VideoView
     private lateinit var buttonPost: Button
     private lateinit var videoFile: File
 
+    private var mAuth: FirebaseAuth? = null
+    private var mStorageRef: StorageReference? = null
     private val postsCollection = Firebase.firestore.collection("posts")
-
-    var mAuth: FirebaseAuth? = null
-    var firebaseDatabase: FirebaseDatabase? = null
-    var myRef: DatabaseReference? = null
-    var mStorageRef: StorageReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,22 +54,18 @@ class PostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         etPostTitle = view.findViewById(R.id.etPostTitle)
-        postThumbnail = view.findViewById(R.id.postVideoThumbnail)
+        videoViewPost = view.findViewById(R.id.videoViewPost)
         buttonPost = view.findViewById(R.id.buttonPost)
         videoFile = File(videoPath)
 
         mAuth = FirebaseAuth.getInstance()
-        firebaseDatabase = FirebaseDatabase.getInstance()
-        myRef = firebaseDatabase!!.reference
         mStorageRef = FirebaseStorage.getInstance().reference
 
-        Glide
-            .with(requireContext())
-            .load(videoFile.toUri())
-            .thumbnail(0.1f)
-            .placeholder(R.drawable.empty_image_thumbnail)
-            .error(R.drawable.empty_image_thumbnail)
-            .into(postThumbnail)
+        videoViewPost.setVideoPath(videoPath)
+        videoViewPost.setOnCompletionListener { // repeat the playback
+            videoViewPost.start()
+        }
+        videoViewPost.start()
 
         buttonPost.setOnClickListener {
             upload()
@@ -83,16 +73,16 @@ class PostFragment : Fragment() {
     }
 
     private fun upload() {
-        val userId = Firebase.auth.currentUser.uid
+        val userId = Firebase.auth.currentUser!!.uid
 
         val storageReference = mStorageRef!!.child("videos/$userId/$videoName")
-        storageReference.putFile(videoFile.toUri()).addOnSuccessListener { taskSnapshot ->
+        storageReference.putFile(videoFile.toUri()).addOnSuccessListener {
 
             val newReference = FirebaseStorage.getInstance().getReference("videos/$userId/$videoName")
             // add post to firestore database to be fetched later in feed
             newReference.downloadUrl.addOnSuccessListener { uri ->
                 val downloadURL = uri.toString()
-                val user = mAuth!!.currentUser
+                val user = mAuth!!.currentUser!!
 
                 val post = Post(
                     user.displayName!!,
@@ -122,11 +112,9 @@ class PostFragment : Fragment() {
             }
 
         }.addOnFailureListener { exception ->
-            if (exception != null) {
-                Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG)
-                    .show()
-                findNavController().popBackStack()
-            }
+            Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG)
+                .show()
+            findNavController().popBackStack()
         }
     }
 }
