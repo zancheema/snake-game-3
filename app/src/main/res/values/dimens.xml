@@ -2,4 +2,6 @@
 <resources>
     <dimen name="button_corner_radius">24dp</dimen>
     <dimen name="button_horizontal_padding">50dp</dimen>
+    <dimen name="max_width_chat_message">260dp</dimen>
+    <dimen name="corner_radius_chat_message_mine">8dp</dimen>
 </resources>

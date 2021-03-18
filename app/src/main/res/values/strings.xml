@@ -41,4 +41,6 @@
     <string name="feed">Feed</string>
     <string name="add_friend">Add Friend</string>
     <string name="message">Message</string>
+    <string name="send">Send</string>
+    <string name="type_message">Type a message...</string>
 </resources>
