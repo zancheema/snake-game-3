@@ -123,10 +123,11 @@ class LoginFragment : Fragment() {
 
         // Pass the activity result back to the Facebook SDK
         Log.d(TAG, "onActivityResult: called")
-        callbackManager.onActivityResult(requestCode, resultCode, data)
+//        callbackManager.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            Log.d(TAG, "onActivityResult: matches google sign in request code")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -134,7 +135,10 @@ class LoginFragment : Fragment() {
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
+                Log.d(TAG, "onActivityResult: ApiException", e)
             }
+        } else {
+            Log.d(TAG, "onActivityResult: does not match any request code")
         }
     }
 

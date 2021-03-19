@@ -43,4 +43,8 @@
     <string name="message">Message</string>
     <string name="send">Send</string>
     <string name="type_message">Type a message...</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="sample_username">George V</string>
+    <string name="sample_notification_time">7:45 PM</string>
 </resources>
