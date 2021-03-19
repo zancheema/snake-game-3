@@ -2,6 +2,7 @@ package com.example.android.socialnetwork.signup
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -19,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
-import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.model.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -228,10 +228,16 @@ class SignUpFragment : Fragment() {
                                         val userID: String = firebaseUser.uid
 
                                         // add user in firestore users collection
+                                        val token = requireContext().getSharedPreferences(
+                                            "MAIN",
+                                            Context.MODE_PRIVATE
+                                        )
+                                            .getString("token", "no-token")!!
                                         val user = User(
                                             etUsername.text.toString().trim(),
                                             etEmail.text.toString().trim(),
-                                            serverFileUri.path.toString()
+                                            serverFileUri.path.toString(),
+                                            token
                                         )
                                         usersCollection.document(userID).set(user)
                                             .addOnCompleteListener { task ->
@@ -277,12 +283,15 @@ class SignUpFragment : Fragment() {
 //                progressBar.visibility = View.GONE
                 if (task.isSuccessful) {
                     val userID: String = firebaseUser.uid
+                    val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
+                        .getString("token", "no-token")!!
 
                     // save user to firestore users collection
                     val user = User(
                         etUsername.text.toString().trim(),
                         etEmail.text.toString().trim(),
-                        ""
+                        "",
+                        token
                     )
                     usersCollection.document(userID).set(user)
                         .addOnCompleteListener { task ->

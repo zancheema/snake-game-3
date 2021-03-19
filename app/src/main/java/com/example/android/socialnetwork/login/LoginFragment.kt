@@ -1,5 +1,6 @@
 package com.example.android.socialnetwork.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +13,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
-import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.common.Utils
 import com.example.android.socialnetwork.model.User
 import com.facebook.AccessToken
@@ -189,11 +189,14 @@ class LoginFragment : Fragment() {
      * So, all sign up credentials are stored at login
      */
     private fun saveUserDataAndOpenFeed() {
-        auth.currentUser.let { firebaseUser ->
+        val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
+            .getString("token", "no-token")!!
+        auth.currentUser?.let { firebaseUser ->
             val user = User(
-                firebaseUser.displayName.trim(),
-                firebaseUser.email.trim(),
-                firebaseUser.photoUrl.toString(),
+                firebaseUser.displayName!!.trim(),
+                firebaseUser.email!!.trim(),
+                firebaseUser.photoUrl!!.toString(),
+                token,
             )
             usersCollections.document(firebaseUser.uid)
                 .set(user)

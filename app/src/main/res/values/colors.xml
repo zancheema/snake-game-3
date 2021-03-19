@@ -14,4 +14,5 @@
     <color name="gray">#AAAAAA</color>
     <color name="light_gray">#C4C4C4</color>
     <color name="button_color_light">#8CC2E3</color>
+    <color name="notification">#b6bde1</color>
 </resources>
