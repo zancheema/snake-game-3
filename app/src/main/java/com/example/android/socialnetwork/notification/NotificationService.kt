@@ -2,6 +2,7 @@ package com.example.android.socialnetwork.notification
 
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
@@ -12,10 +13,14 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+private const val TAG = "NotificationService"
+
 class NotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+
+        Log.d(TAG, "onNewToken: $token")
 
         // Once a token is generated, we subscribe to topic.
         FirebaseMessaging.getInstance()
@@ -29,10 +34,11 @@ class NotificationService : FirebaseMessagingService() {
 
         val notification = remoteMessage.notification ?: return
         val title = notification.title ?: return
-        showNotification(title)
+        val content = notification.body ?: return
+        showNotification(title, content)
     }
 
-    private fun showNotification(title: String) {
+    private fun showNotification(title: String, content: String) {
         val nManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -47,6 +53,7 @@ class NotificationService : FirebaseMessagingService() {
             setSmallIcon(R.drawable.app_logo)
             color = ContextCompat.getColor(this@NotificationService, R.color.theme_blue)
             setContentTitle(title)
+            setContentText(content)
             setAutoCancel(true)
             setContentIntent(pendingIntent)
         }

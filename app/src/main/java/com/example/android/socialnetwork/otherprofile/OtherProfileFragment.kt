@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,9 +13,13 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.Auth
+import com.example.android.socialnetwork.model.Notification
 import com.example.android.socialnetwork.model.User
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class OtherProfileFragment : Fragment() {
 
@@ -23,15 +28,21 @@ class OtherProfileFragment : Fragment() {
     private lateinit var ivProfilePic: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvEmail: TextView
+    private lateinit var buttonAddFriend: Button
 
     private lateinit var userUid: String
-    private lateinit var user: User
+    private lateinit var otherUser: User
+    private lateinit var currentUser: User
+
+    private val firebaseUser = Firebase.auth.currentUser!!
     private val usersCollection = Firebase.firestore.collection("users")
+    private lateinit var notificationCollection: CollectionReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         userUid = arguments?.getString("userUid")!!
+        notificationCollection = usersCollection.document(userUid).collection("notifications")
     }
 
     override fun onCreateView(
@@ -50,26 +61,62 @@ class OtherProfileFragment : Fragment() {
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvEmail = view.findViewById(R.id.tvEmail)
+        buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
+
+        usersCollection.document(firebaseUser.uid).get()
+            .addOnSuccessListener {
+                currentUser = it.toObject(User::class.java)!!
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to load current user", Toast.LENGTH_SHORT).show()
+            }
 
         usersCollection.document(userUid).get()
             .addOnSuccessListener {
-                user = it.toObject(User::class.java)!!
+                otherUser = it.toObject(User::class.java)!!
 
-                val username = user.username.replace("\\s".toRegex(), "").toLowerCase()
+                val username = otherUser.username.replace("\\s".toRegex(), "").toLowerCase()
                 tvUsername.text = "@$username"
                 Glide
                     .with(requireContext())
-                    .load(user.photoUrl)
+                    .load(otherUser.photoUrl)
                     .placeholder(R.drawable.ic_baseline_person_24)
                     .error(R.drawable.ic_baseline_person_24)
                     .into(ivProfilePic)
                 tvProfileName.text = username
-                tvEmail.text = user.email
+                tvEmail.text = otherUser.email
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to load user", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
+
+        usersCollection.document(firebaseUser.uid).get()
+            .addOnSuccessListener {
+                otherUser = it.toObject(User::class.java)!!
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to load current user", Toast.LENGTH_SHORT).show()
+            }
+
+        buttonAddFriend.setOnClickListener {
+
+            val notification = Notification(
+                "friendRequest",
+                UUID.randomUUID().toString(),
+                otherUser.messagingToken,
+                "Let's be friends",
+                currentUser.username,
+                currentUser.photoUrl
+            )
+            notificationCollection.document(notification.notificationId).set(notification)
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Friend Request Sent", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Error sending request: $it", Toast.LENGTH_SHORT).show()
+                }
+        }
 
         logoutIcon.setOnClickListener {
             Auth.logoutAndNavigateToLogin(
