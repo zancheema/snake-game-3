@@ -1,7 +1,6 @@
 package com.example.android.socialnetwork.model
 
 data class User(
-    val uid: String = "",
     val username: String = "",
     val email: String = "",
     val photoUrl: String = "",

@@ -1,6 +1,7 @@
 package com.example.android.socialnetwork.notification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
+private const val TAG = "NotificationFragment"
+
 class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestListener {
 
     private lateinit var notificationList: RecyclerView
@@ -22,7 +25,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
     private val firebaseUser = Firebase.auth.currentUser!!
     private val usersCollection = Firebase.firestore.collection("users")
     private val notificationCollection =
-        usersCollection.document(firebaseUser.uid)
+        usersCollection.document(firebaseUser.email)
             .collection("notifications")
 
     override fun onCreateView(
@@ -43,42 +46,45 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
     }
 
     override fun onAcceptFriendRequest(notification: Notification) {
+        Log.d(TAG, "sender email: ${notification.senderEmail}")
+        Log.d(TAG, "receiver email: ${notification.receiverEmail}")
+
         val newNotification = Notification(
             "friendRequestAccepted",
             UUID.randomUUID().toString(),
             "",
             firebaseUser.displayName,
             firebaseUser.photoUrl.toString(),
-            notification.receiverUid,
+            notification.receiverEmail,
             notification.receiverToken,
-            notification.senderUid,
+            notification.senderEmail,
             notification.senderToken
         )
-        usersCollection.document(notification.senderUid).collection("notifications")
-            .document(newNotification.notificationId)
+        usersCollection.document(notification.senderEmail).collection("notifications")
+            .document(newNotification.receiverEmail)
             .set(newNotification)
             .addOnSuccessListener {
-                usersCollection.document(notification.senderUid)
+                val chat = Chat(
+                    newNotification.senderName,
+                    newNotification.senderEmail,
+                    newNotification.senderToken,
+                    newNotification.photoUrl
+                )
+                usersCollection.document(newNotification.receiverEmail)
                     .collection("chats")
-                    .add(
-                        Chat(
-                            newNotification.senderUid,
-                            newNotification.senderName,
-                            newNotification.senderToken,
-                            newNotification.photoUrl
-                        )
-                    )
+                    .document(chat.userEmail)
+                    .set(chat)
                     .addOnSuccessListener {
-                        usersCollection.document(notification.receiverUid)
+                        val chat = Chat(
+                            notification.senderName,
+                            notification.senderEmail,
+                            notification.senderToken,
+                            notification.photoUrl
+                        )
+                        usersCollection.document(notification.receiverEmail)
                             .collection("chats")
-                            .add(
-                                Chat(
-                                    notification.senderUid,
-                                    notification.senderName,
-                                    notification.senderToken,
-                                    notification.photoUrl
-                                )
-                            )
+                            .document(chat.userEmail)
+                            .set(chat)
                             .addOnSuccessListener {
                                 deleteNotification(notification.notificationId)
                             }

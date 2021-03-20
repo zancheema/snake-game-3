@@ -30,7 +30,7 @@ class OtherProfileFragment : Fragment() {
     private lateinit var tvEmail: TextView
     private lateinit var buttonAddFriend: Button
 
-    private lateinit var userUid: String
+    private lateinit var userEmail: String
     private lateinit var otherUser: User
     private lateinit var currentUser: User
 
@@ -41,8 +41,8 @@ class OtherProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        userUid = arguments?.getString("userUid")!!
-        notificationCollection = usersCollection.document(userUid).collection("notifications")
+        userEmail = arguments?.getString("userEmail")!!
+        notificationCollection = usersCollection.document(userEmail).collection("notifications")
     }
 
     override fun onCreateView(
@@ -63,7 +63,7 @@ class OtherProfileFragment : Fragment() {
         tvEmail = view.findViewById(R.id.tvEmail)
         buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
 
-        usersCollection.document(firebaseUser.uid).get()
+        usersCollection.document(firebaseUser.email).get()
             .addOnSuccessListener {
                 currentUser = it.toObject(User::class.java)!!
             }
@@ -71,7 +71,7 @@ class OtherProfileFragment : Fragment() {
                 Toast.makeText(context, "Failed to load current user", Toast.LENGTH_SHORT).show()
             }
 
-        usersCollection.document(userUid).get()
+        usersCollection.document(userEmail).get()
             .addOnSuccessListener {
                 otherUser = it.toObject(User::class.java)!!
 
@@ -91,7 +91,7 @@ class OtherProfileFragment : Fragment() {
                 findNavController().popBackStack()
             }
 
-        usersCollection.document(firebaseUser.uid).get()
+        usersCollection.document(userEmail).get()
             .addOnSuccessListener {
                 otherUser = it.toObject(User::class.java)!!
             }
@@ -107,9 +107,9 @@ class OtherProfileFragment : Fragment() {
                 "Let's be friends",
                 currentUser.username,
                 currentUser.photoUrl,
-                currentUser.uid,
+                currentUser.email,
                 currentUser.messagingToken,
-                otherUser.uid,
+                otherUser.email,
                 otherUser.messagingToken
             )
             notificationCollection.document(notification.notificationId).set(notification)

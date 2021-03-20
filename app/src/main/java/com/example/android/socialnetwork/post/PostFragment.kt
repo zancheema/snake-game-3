@@ -88,7 +88,6 @@ class PostFragment : Fragment() {
                 val user = mAuth!!.currentUser!!
 
                 val post = Post(
-                    user.uid,
                     user.displayName!!,
                     user.photoUrl?.toString() ?: "",
                     user.email!!,

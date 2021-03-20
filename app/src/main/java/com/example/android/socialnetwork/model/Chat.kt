@@ -5,8 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Chat(
-    val uid: String = "",
     val username: String = "",
+    val userEmail: String = "",
     val messagingToken: String = "",
     val photoUrl: String = "",
     val recentMessage: String = "",

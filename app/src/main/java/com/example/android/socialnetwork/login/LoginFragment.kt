@@ -182,6 +182,11 @@ class LoginFragment : Fragment() {
             }
     }
 
+    private fun googleSignIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
     /**
      * Store signed in user to database
      *
@@ -193,23 +198,17 @@ class LoginFragment : Fragment() {
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
             val user = User(
-                firebaseUser.uid,
                 firebaseUser.displayName!!.trim(),
                 firebaseUser.email!!.trim(),
                 firebaseUser.photoUrl!!.toString(),
                 token,
             )
-            usersCollections.document(firebaseUser.uid)
+            usersCollections.document(user.email)
                 .set(user)
                 .addOnSuccessListener {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
         }
-    }
-
-    private fun googleSignIn() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     //When log in button is clicked

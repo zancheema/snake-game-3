@@ -21,7 +21,7 @@ class ChatsFragment : Fragment() {
 
     private val chatsCollection = Firebase.firestore
         .collection("users")
-        .document(Firebase.auth.currentUser!!.uid)
+        .document(Firebase.auth.currentUser!!.email)
         .collection("chats")
 
     override fun onCreateView(

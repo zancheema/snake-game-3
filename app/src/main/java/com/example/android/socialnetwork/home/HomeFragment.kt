@@ -36,9 +36,9 @@ class HomeFragment : Fragment() {
 
         postFeed = view.findViewById(R.id.postFeed)
         openChat = view.findViewById(R.id.openChat)
-        val postFeedAdapter = PostFeedListAdapter { userUid ->
+        val postFeedAdapter = PostFeedListAdapter { userEmail ->
             val args = bundleOf(
-                "userUid" to userUid
+                "userEmail" to userEmail
             )
             findNavController().navigate(R.id.action_homeFragment_to_otherProfileFragment, args)
         }

@@ -21,12 +21,12 @@ class PostFeedListAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(post: Post, onClickUserPhoto: (String) -> Unit) {
+        fun bind(post: Post, onClickUserName: (String) -> Unit) {
             itemView.apply {
                 findViewById<TextView>(R.id.tvUsername).apply {
                     text = post.username.replace("\\s".toRegex(), "").toLowerCase()
                     setOnClickListener {
-                        onClickUserPhoto(post.userUid)
+                        onClickUserName(post.userEmail)
                     }
                 }
                 findViewById<TextView>(R.id.tvPostTitle).text = post.title
