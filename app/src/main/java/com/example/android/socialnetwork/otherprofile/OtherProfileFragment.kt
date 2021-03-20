@@ -1,7 +1,6 @@
 package com.example.android.socialnetwork.otherprofile
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
@@ -102,12 +102,15 @@ class OtherProfileFragment : Fragment() {
         buttonAddFriend.setOnClickListener {
 
             val notification = Notification(
-                "friendRequest",
+                "friendRequestSent",
                 UUID.randomUUID().toString(),
-                otherUser.messagingToken,
                 "Let's be friends",
                 currentUser.username,
-                currentUser.photoUrl
+                currentUser.photoUrl,
+                currentUser.uid,
+                currentUser.messagingToken,
+                otherUser.uid,
+                otherUser.messagingToken
             )
             notificationCollection.document(notification.notificationId).set(notification)
                 .addOnSuccessListener {

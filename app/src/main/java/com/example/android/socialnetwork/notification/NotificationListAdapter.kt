@@ -22,7 +22,9 @@ class NotificationListAdapter(private val friendRequestListener: FriendRequestLi
         fun onDeclineFriendRequest(notification: Notification)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    class FriendRequestSentViewHolder(itemView: View) : ViewHolder(itemView) {
         fun bind(notification: Notification, friendRequestListener: FriendRequestListener) {
             itemView.apply {
                 Glide
@@ -32,7 +34,7 @@ class NotificationListAdapter(private val friendRequestListener: FriendRequestLi
                     .error(R.drawable.ic_baseline_person_24)
                     .into(findViewById(R.id.ivProfilePic))
 
-                findViewById<TextView>(R.id.tvUsername).text = notification.username
+                findViewById<TextView>(R.id.tvUsername).text = notification.senderName
 
                 val timeFormat = SimpleDateFormat("hh:mm a", Locale.US)
                 val time = timeFormat.format(Date(notification.timestamp))
@@ -48,14 +50,61 @@ class NotificationListAdapter(private val friendRequestListener: FriendRequestLi
         }
     }
 
+    class FriendRequestAcceptedViewHolder(itemView: View) : ViewHolder(itemView) {
+        fun bind(notification: Notification) {
+            itemView.apply {
+                Glide
+                    .with(itemView.context)
+                    .load(notification.photoUrl)
+                    .placeholder(R.drawable.ic_baseline_person_24)
+                    .error(R.drawable.ic_baseline_person_24)
+                    .into(findViewById(R.id.ivProfilePic))
+
+                findViewById<TextView>(R.id.tvMessage).text =
+                    "${notification.senderName} accepted your friend request"
+
+                val timeFormat = SimpleDateFormat("hh:mm a", Locale.US)
+                val time = timeFormat.format(Date(notification.timestamp))
+                findViewById<TextView>(R.id.tvTime).text = time
+            }
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.notification_friend_request_item, parent, false)
-        return ViewHolder(itemView)
+        return when (viewType) {
+            0 -> {
+                val itemView =
+                    inflater.inflate(R.layout.notification_friend_request_item, parent, false)
+                FriendRequestSentViewHolder(itemView)
+            }
+            else -> {
+                val itemView = inflater.inflate(
+                    R.layout.notification_friend_request_accept_item,
+                    parent,
+                    false
+                )
+                FriendRequestAcceptedViewHolder(itemView)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), friendRequestListener)
+        val item = getItem(position)
+        val viewType = getItemViewType(position)
+        if (viewType == 0) {
+            (holder as FriendRequestSentViewHolder).bind(item, friendRequestListener)
+        } else if (viewType == 1) {
+            (holder as FriendRequestAcceptedViewHolder).bind(item)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position).notificationType) {
+            "friendRequestSent" -> 0
+            "friendRequestAccepted" -> 1
+            else -> -1
+        }
     }
 }
 

@@ -193,6 +193,7 @@ class LoginFragment : Fragment() {
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
             val user = User(
+                firebaseUser.uid,
                 firebaseUser.displayName!!.trim(),
                 firebaseUser.email!!.trim(),
                 firebaseUser.photoUrl!!.toString(),

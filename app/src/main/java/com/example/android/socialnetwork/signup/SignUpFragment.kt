@@ -234,6 +234,7 @@ class SignUpFragment : Fragment() {
                                         )
                                             .getString("token", "no-token")!!
                                         val user = User(
+                                            userID,
                                             etUsername.text.toString().trim(),
                                             etEmail.text.toString().trim(),
                                             serverFileUri.path.toString(),
@@ -288,6 +289,7 @@ class SignUpFragment : Fragment() {
 
                     // save user to firestore users collection
                     val user = User(
+                        firebaseUser.uid,
                         etUsername.text.toString().trim(),
                         etEmail.text.toString().trim(),
                         "",
