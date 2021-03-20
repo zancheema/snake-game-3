@@ -5,14 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
-import com.example.android.socialnetwork.common.Auth
 import com.example.android.socialnetwork.model.Post
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -22,7 +20,7 @@ private const val TAG = "HomeFragment"
 class HomeFragment : Fragment() {
 
     private lateinit var postFeed: RecyclerView
-    private lateinit var logoutIcon: ImageView
+    private lateinit var openChat: View
     private val postsCollection = Firebase.firestore.collection("posts")
 
     override fun onCreateView(
@@ -37,7 +35,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         postFeed = view.findViewById(R.id.postFeed)
-        logoutIcon = view.findViewById(R.id.logoutIcon)
+        openChat = view.findViewById(R.id.openChat)
         val postFeedAdapter = PostFeedListAdapter { userUid ->
             val args = bundleOf(
                 "userUid" to userUid
@@ -60,8 +58,8 @@ class HomeFragment : Fragment() {
                 Toast.makeText(context, "Error Loading feed: $exc", Toast.LENGTH_SHORT).show()
             }
 
-        logoutIcon.setOnClickListener {
-            Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
+        openChat.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_chatsFragment)
         }
     }
 }

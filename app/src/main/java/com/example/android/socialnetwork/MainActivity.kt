@@ -30,13 +30,13 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             run {
                 // show or hide bottom navigation with respect to currently displayed fragment
-                if (destination.id == R.id.loginFragment ||
-                    destination.id == R.id.signUpFragment ||
-                    destination.id == R.id.recordVideoFragment
+                if (destination.id == R.id.homeFragment ||
+                    destination.id == R.id.notificationFragment ||
+                    destination.id == R.id.profileFragment
                 ) {
-                    bottomNav.visibility = View.GONE
-                } else {
                     bottomNav.visibility = View.VISIBLE
+                } else {
+                    bottomNav.visibility = View.GONE
                 }
             }
         }
