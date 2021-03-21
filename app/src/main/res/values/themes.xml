@@ -14,4 +14,9 @@
         <!-- Customize your theme here. -->
         <item name="buttonStyle">@style/ButtonStyle</item>
     </style>
+
+    <style name="Theme.SplashScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
 </resources>

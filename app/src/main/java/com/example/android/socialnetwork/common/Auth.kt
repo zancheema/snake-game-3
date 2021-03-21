@@ -3,10 +3,11 @@ package com.example.android.socialnetwork.common
 import android.app.Activity
 import androidx.navigation.NavController
 import com.example.android.socialnetwork.R
+import com.example.android.socialnetwork.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 object Auth {
@@ -24,6 +25,16 @@ object Auth {
         activity: Activity,
         onLoggedOut: () -> Unit = {}
     ) {
+        // update user status in database
+        val userDoc =
+            Firebase.firestore.collection("users").document(Firebase.auth.currentUser.email)
+        userDoc.get()
+            .addOnSuccessListener { snap ->
+                val user =
+                    snap.toObject(User::class.java)!!.copy(online = false, messagingToken = "")
+                userDoc.set(user)
+            }
+
         // sign out of firebase
         Firebase.auth.signOut()
         // sign out of google (if needed)

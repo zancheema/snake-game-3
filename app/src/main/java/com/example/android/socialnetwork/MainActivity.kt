@@ -12,6 +12,7 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_FiverrOrder3)
         setContentView(R.layout.activity_main)
 
         /** setup the bottom nav view */

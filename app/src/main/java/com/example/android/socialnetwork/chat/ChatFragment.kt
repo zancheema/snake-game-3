@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
@@ -23,6 +26,8 @@ class ChatFragment : Fragment() {
     private lateinit var myChatMessagesCollection: CollectionReference
     private lateinit var sendMessage: View
     private lateinit var etMessage: EditText
+    private lateinit var tvUsername: TextView
+    private lateinit var backIcon: View
 
     private val firebaseUser = Firebase.auth.currentUser!!
 
@@ -57,6 +62,10 @@ class ChatFragment : Fragment() {
 
         sendMessage = view.findViewById(R.id.tvSendMessage)
         etMessage = view.findViewById(R.id.etMessage)
+        tvUsername = view.findViewById(R.id.tvUsername)
+        backIcon = view.findViewById(R.id.backIcon)
+
+        tvUsername.text = chat.username
 
         messageList = view.findViewById(R.id.messageList)
         val messageListAdapter = ChatMessageListAdapter()
@@ -78,6 +87,10 @@ class ChatFragment : Fragment() {
 
             refreshChatMessages(messageListAdapter)
             etMessage.text.clear()
+        }
+
+        backIcon.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
