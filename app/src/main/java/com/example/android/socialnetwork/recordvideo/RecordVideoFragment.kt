@@ -1,26 +1,22 @@
 package com.example.android.socialnetwork.recordvideo
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.core.VideoCapture
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.socialnetwork.R
+import com.otaliastudios.cameraview.CameraListener
+import com.otaliastudios.cameraview.CameraView
+import com.otaliastudios.cameraview.VideoResult
+import com.otaliastudios.cameraview.controls.Facing
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,15 +25,10 @@ import java.util.concurrent.Executors
 
 class RecordVideoFragment : Fragment() {
 
-    private var videoCapture: VideoCapture? = null
-
-    private var videoIsRecorded = false
-    private var frontCameraEnabled = true
-
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var viewFinder: PreviewView
-    private lateinit var startStopRecording: View
+    private lateinit var cameraView: CameraView
+    private lateinit var cameraShutter: View
     private lateinit var cameraRotate: View
     private lateinit var cameraOptions: View
 
@@ -52,14 +43,12 @@ class RecordVideoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewFinder = view.findViewById(R.id.viewFinder)
-        startStopRecording = view.findViewById(R.id.startCamera)
+        cameraView = view.findViewById(R.id.cameraView)
+        cameraShutter = view.findViewById(R.id.cameraShutter)
         cameraRotate = view.findViewById(R.id.cameraRotate)
         cameraOptions = view.findViewById(R.id.cameraOptions)
 
-        if (allPermissionsGranted()) {
-            startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-        } else {
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 REQUIRED_PERMISSIONS,
@@ -67,7 +56,15 @@ class RecordVideoFragment : Fragment() {
             )
         }
 
-        startStopRecording.setOnClickListener { startOrStopRecording() }
+        if (allPermissionsGranted()) {
+            setUpCamera()
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
+            )
+        }
         cameraRotate.setOnClickListener { rotateCamera() }
 
         outputDirectory = getOutputDirectory()
@@ -82,7 +79,7 @@ class RecordVideoFragment : Fragment() {
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+                setUpCamera()
             } else {
                 Toast.makeText(
                     context,
@@ -94,91 +91,50 @@ class RecordVideoFragment : Fragment() {
         }
     }
 
-    private fun rotateCamera() {
-        frontCameraEnabled = if (frontCameraEnabled) {
-            startCamera(CameraSelector.DEFAULT_BACK_CAMERA)
-            false
-        } else {
-            startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-            true
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun startOrStopRecording() {
-        // Stop recording if its already being done
-        if (videoIsRecorded) {
-            videoCapture?.stopRecording()
-            cameraOptions.visibility = View.VISIBLE
-            videoIsRecorded = false
-            return
-        }
-
-        // Start recording the video
-        val fileName: String = SimpleDateFormat(
-            FILENAME_FORMAT, Locale.US
-        ).format(System.currentTimeMillis()) + ".mp4"
-        val videoFile = File(
-            outputDirectory,
-            fileName
-        )
-
-        videoCapture?.startRecording(
-            videoFile,
-            ContextCompat.getMainExecutor(context),
-            object : VideoCapture.OnVideoSavedCallback {
-                override fun onVideoSaved(file: File) {
-                    val savedUri = Uri.fromFile(file)
+    private fun setUpCamera() {
+        cameraView.apply {
+            setLifecycleOwner(viewLifecycleOwner)
+            addCameraListener(object : CameraListener() {
+                override fun onVideoTaken(result: VideoResult) {
+                    super.onVideoTaken(result)
                     val args = bundleOf(
-                        "videoPath" to savedUri.path,
-                        "videoName" to fileName
+                        "videoPath" to result.file.path,
+                        "videoName" to result.file.name
                     )
                     findNavController().navigate(
                         R.id.action_recordVideoFragment_to_postFragment,
                         args
                     )
                 }
+            })
+        }
 
-                override fun onError(videoCaptureError: Int, message: String, exc: Throwable?) {
-                    Log.e(TAG, "Video recording failed: $message", exc)
-                }
+
+        cameraShutter.setOnClickListener {
+            if (cameraView.isTakingVideo) {
+                cameraView.stopVideo()
+                cameraOptions.visibility = View.VISIBLE
+            } else {
+                // Start recording the video
+                val fileName: String = SimpleDateFormat(
+                    FILENAME_FORMAT, Locale.US
+                ).format(System.currentTimeMillis()) + ".mp4"
+                val videoFile = File(
+                    getOutputDirectory(),
+                    fileName
+                )
+                cameraView.takeVideoSnapshot(videoFile)
+                cameraOptions.visibility = View.GONE
             }
-        )
-        cameraOptions.visibility = View.GONE
-        videoIsRecorded = true
+        }
     }
 
-    private fun startCamera(cameraSelector: CameraSelector) {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            // Preview
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(viewFinder.createSurfaceProvider())
-                }
-
-
-            videoCapture = VideoCapture.Builder().build()
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, videoCapture
-                )
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-
-        }, ContextCompat.getMainExecutor(context))
+    private fun rotateCamera() {
+        cameraView.facing = when (cameraView.facing) {
+            Facing.BACK -> Facing.FRONT
+            else -> Facing.BACK
+        }
+        cameraView.invalidate()
     }
 
     private fun allPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all {
@@ -200,7 +156,6 @@ class RecordVideoFragment : Fragment() {
 
 
     companion object {
-        private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS =

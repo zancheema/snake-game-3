@@ -12,35 +12,39 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="cameraRotate,cameraFilters" />
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+    <com.otaliastudios.cameraview.CameraView
+        android:id="@+id/cameraView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        app:cameraEngine="camera1"
+        app:cameraMode="video"
+        app:cameraPreview="glSurface" />
 
     <ImageView
         android:id="@+id/cameraFilters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_options_camera"
-        app:layout_constraintBottom_toBottomOf="@id/startCamera"
-        app:layout_constraintEnd_toStartOf="@+id/startCamera"
+        app:layout_constraintBottom_toBottomOf="@id/cameraShutter"
+        app:layout_constraintEnd_toStartOf="@+id/cameraShutter"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/startCamera" />
+        app:layout_constraintTop_toTopOf="@+id/cameraShutter" />
 
     <ImageView
         android:id="@+id/cameraRotate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_rotate_camera"
-        app:layout_constraintBottom_toBottomOf="@id/startCamera"
+        app:layout_constraintBottom_toBottomOf="@id/cameraShutter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/startCamera"
-        app:layout_constraintTop_toTopOf="@+id/startCamera" />
+        app:layout_constraintStart_toEndOf="@+id/cameraShutter"
+        app:layout_constraintTop_toTopOf="@+id/cameraShutter" />
 
     <ImageView
-        android:id="@+id/startCamera"
+        android:id="@+id/cameraShutter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
