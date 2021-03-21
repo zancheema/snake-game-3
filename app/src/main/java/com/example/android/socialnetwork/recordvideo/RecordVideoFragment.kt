@@ -17,20 +17,26 @@ import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.VideoResult
 import com.otaliastudios.cameraview.controls.Facing
+import com.otaliastudios.cameraview.filter.Filters
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 class RecordVideoFragment : Fragment() {
 
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraView: CameraView
     private lateinit var cameraShutter: View
     private lateinit var cameraRotate: View
     private lateinit var cameraOptions: View
+    private lateinit var cameraFilters: View
+    private lateinit var filtersList: View
+
+    // camera filters
+    private lateinit var grayscale: View
+    private lateinit var hue: View
+    private lateinit var blackAndWhite: View
+    private lateinit var documentary: View
+    private lateinit var temperature: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +53,16 @@ class RecordVideoFragment : Fragment() {
         cameraShutter = view.findViewById(R.id.cameraShutter)
         cameraRotate = view.findViewById(R.id.cameraRotate)
         cameraOptions = view.findViewById(R.id.cameraOptions)
+        cameraFilters = view.findViewById(R.id.cameraFilters)
+        filtersList = view.findViewById(R.id.filtersList)
+
+        grayscale = view.findViewById(R.id.grayscale)
+        hue = view.findViewById(R.id.hue)
+        blackAndWhite = view.findViewById(R.id.blackAndWhite)
+        documentary = view.findViewById(R.id.documentary)
+        temperature = view.findViewById(R.id.temperature)
+
+        setUpFilters()
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -66,10 +82,40 @@ class RecordVideoFragment : Fragment() {
             )
         }
         cameraRotate.setOnClickListener { rotateCamera() }
+        cameraFilters.setOnClickListener {
+            filtersList.visibility = when (filtersList.visibility) {
+                View.VISIBLE -> View.GONE
+                else -> View.VISIBLE
+            }
+        }
+    }
 
-        outputDirectory = getOutputDirectory()
+    private fun setUpFilters() {
+        grayscale.setOnClickListener {
+            cameraView.filter = Filters.GRAYSCALE.newInstance()
+            afterNewFilterSet()
+        }
+        hue.setOnClickListener {
+            cameraView.filter = Filters.HUE.newInstance()
+            afterNewFilterSet()
+        }
+        blackAndWhite.setOnClickListener {
+            cameraView.filter = Filters.BLACK_AND_WHITE.newInstance()
+            afterNewFilterSet()
+        }
+        documentary.setOnClickListener {
+            cameraView.filter = Filters.DOCUMENTARY.newInstance()
+            afterNewFilterSet()
+        }
+        temperature.setOnClickListener {
+            cameraView.filter = Filters.TEMPERATURE.newInstance()
+            afterNewFilterSet()
+        }
+    }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
+    private fun afterNewFilterSet() {
+        filtersList.visibility = View.INVISIBLE
+        cameraView.invalidate()
     }
 
     override fun onRequestPermissionsResult(
@@ -148,12 +194,6 @@ class RecordVideoFragment : Fragment() {
         return if (mediaDir != null && mediaDir.exists())
             mediaDir else requireActivity().filesDir
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
-    }
-
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
