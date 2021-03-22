@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -21,7 +22,7 @@ class ChatsFragment : Fragment() {
 
     private val chatsCollection = Firebase.firestore
         .collection("users")
-        .document(Firebase.auth.currentUser!!.email)
+        .document(Firebase.auth.currentUser!!.email!!)
         .collection("chats")
 
     override fun onCreateView(
@@ -46,14 +47,24 @@ class ChatsFragment : Fragment() {
 
         chatsCollection.get()
             .addOnSuccessListener { snap ->
-                val chats = mutableListOf<Chat>()
-                for (doc in snap.documents) {
-                    chats.add(doc.toObject(Chat::class.java)!!)
-                }
+                val chats = getChats(snap)
                 chatsListAdapter.submitList(chats)
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to load chats: $it", Toast.LENGTH_SHORT).show()
             }
+
+        // observe for changes to chats collection
+        chatsCollection.addSnapshotListener { snap, error ->
+            if (error != null) {
+                Toast.makeText(context, "Error loading chats: $error", Toast.LENGTH_SHORT).show()
+                return@addSnapshotListener
+            }
+            chatsListAdapter.submitList(getChats(snap!!))
+        }
     }
+
+    private fun getChats(snap: QuerySnapshot) = snap.documents
+        .map { it.toObject(Chat::class.java) }
+        .sortedByDescending { it?.timestamp }
 }

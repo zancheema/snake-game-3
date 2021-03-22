@@ -29,6 +29,8 @@ class ChatsListAdapter(
 
                 findViewById<TextView>(R.id.tvUsername).text = chat.username
 
+                findViewById<TextView>(R.id.tvRecentMessage).text = chat.recentMessage
+
                 if (chat.timestamp != 0L) {
                     val timeFormat = SimpleDateFormat("hh:mm a", Locale.US)
                     val time = timeFormat.format(Date(chat.timestamp))
@@ -53,7 +55,7 @@ class ChatsListAdapter(
 
 class ChatDiffUtil : DiffUtil.ItemCallback<Chat>() {
     override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-        return oldItem == newItem
+        return oldItem.username == newItem.username
     }
 
     override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {

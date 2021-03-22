@@ -1,7 +1,6 @@
 package com.example.android.socialnetwork.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,6 @@ import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Post
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-
-private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
 
@@ -46,13 +43,11 @@ class HomeFragment : Fragment() {
 
         postsCollection
             .get()
-            .addOnSuccessListener { result ->
-                val posts = mutableListOf<Post>()
-                for (doc in result) {
-                    posts.add(doc.toObject(Post::class.java))
-                    Log.d(TAG, "posts: $posts")
-                    postFeedAdapter.submitList(posts)
-                }
+            .addOnSuccessListener { snap ->
+                val posts = snap.documents
+                    .map { it.toObject(Post::class.java) }
+                    .sortedByDescending { it?.timeStamp }
+                postFeedAdapter.submitList(posts)
             }
             .addOnFailureListener { exc ->
                 Toast.makeText(context, "Error Loading feed: $exc", Toast.LENGTH_SHORT).show()

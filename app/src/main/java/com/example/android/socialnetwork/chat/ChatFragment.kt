@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
@@ -15,11 +15,15 @@ import com.example.android.socialnetwork.model.Chat
 import com.example.android.socialnetwork.model.ChatMessage
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class ChatFragment : Fragment() {
 
+    private lateinit var otherChatDoc: DocumentReference
+    private lateinit var myChatDoc: DocumentReference
     private lateinit var messageList: RecyclerView
     private lateinit var chat: Chat
     private lateinit var otherChatMessagesCollection: CollectionReference
@@ -35,17 +39,21 @@ class ChatFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         chat = requireArguments().getParcelable("chat")!!
-        myChatMessagesCollection = Firebase.firestore
+        myChatDoc = Firebase.firestore
             .collection("users")
             .document(firebaseUser.email!!)
             .collection("chats")
             .document(chat.userEmail)
+
+        otherChatDoc = Firebase.firestore
+            .collection("users")
+            .document(chat.userEmail)
+            .collection("chats")
+            .document(firebaseUser.email!!)
+
+        myChatMessagesCollection = myChatDoc
             .collection("messages")
-        otherChatMessagesCollection = Firebase.firestore
-            .collection("users")
-            .document(chat.userEmail)
-            .collection("chats")
-            .document(firebaseUser.email!!)
+        otherChatMessagesCollection = otherChatDoc
             .collection("messages")
     }
 
@@ -79,11 +87,37 @@ class ChatFragment : Fragment() {
 
             val chatMessage = ChatMessage(firebaseUser.photoUrl?.toString() ?: "", message)
 
+            // send chat message
             myChatMessagesCollection.document(chatMessage.uid)
                 .set(chatMessage)
-
             otherChatMessagesCollection.document(chatMessage.uid)
                 .set(chatMessage.copy(mine = false))
+
+            // update recent message
+            myChatDoc.update(
+                mapOf(
+                    "recentMessage" to chatMessage.message,
+                    "timestamp" to chatMessage.timestamp
+                )
+            )
+            otherChatDoc.update(
+                mapOf(
+                    "recentMessage" to chatMessage.message,
+                    "timestamp" to chatMessage.timestamp
+                )
+            )
+
+            // listen to new messages
+            myChatMessagesCollection.addSnapshotListener { snap, error ->
+                if (error != null) {
+                    Toast.makeText(context, "Failed to load chat: $error", Toast.LENGTH_SHORT)
+                        .show()
+                    return@addSnapshotListener
+                }
+                val messages = getChatMessages(snap!!)
+                messageListAdapter.submitList(messages)
+                messageList.scrollToPosition(messageListAdapter.itemCount)
+            }
 
             refreshChatMessages(messageListAdapter)
             etMessage.text.clear()
@@ -97,13 +131,13 @@ class ChatFragment : Fragment() {
     private fun refreshChatMessages(messageListAdapter: ChatMessageListAdapter) {
         myChatMessagesCollection.get()
             .addOnSuccessListener { snap ->
-                val messages = mutableListOf<ChatMessage>()
-                for (doc in snap.documents) {
-                    messages.add(doc.toObject(ChatMessage::class.java)!!)
-                }
-                messages.sortBy { it.timestamp }
+                val messages = getChatMessages(snap)
                 messageListAdapter.submitList(messages)
-                messageList.scrollToPosition(messageListAdapter.itemCount - 1)
+                messageList.scrollToPosition(messageListAdapter.itemCount)
             }
     }
+
+    private fun getChatMessages(snap: QuerySnapshot) = snap.documents
+        .map { it.toObject(ChatMessage::class.java) }
+        .sortedBy { it?.timestamp }
 }
