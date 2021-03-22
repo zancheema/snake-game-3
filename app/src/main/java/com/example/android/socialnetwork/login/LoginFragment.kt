@@ -123,7 +123,7 @@ class LoginFragment : Fragment() {
 
         // Pass the activity result back to the Facebook SDK
         Log.d(TAG, "onActivityResult: called")
-//        callbackManager.onActivityResult(requestCode, resultCode, data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -156,7 +156,7 @@ class LoginFragment : Fragment() {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(
-                        context, "Authentication failed.",
+                        context, "Authentication failed: ${task.exception}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
