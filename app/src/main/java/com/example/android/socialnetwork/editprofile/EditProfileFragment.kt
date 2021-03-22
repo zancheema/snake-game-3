@@ -10,10 +10,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -38,6 +35,8 @@ class EditProfileFragment : Fragment() {
     private lateinit var logoutIcon: ImageView
     private lateinit var changePictureButton: Button
     private lateinit var saveChangesButton: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var content: View
 
     //firebase variables
     private lateinit var mAuth: FirebaseAuth
@@ -69,6 +68,8 @@ class EditProfileFragment : Fragment() {
         logoutIcon = view.findViewById(R.id.logoutIcon)
         changePictureButton = view.findViewById(R.id.buttonChangePicture)
         saveChangesButton = view.findViewById(R.id.buttonSaveChanges)
+        progressBar = view.findViewById(R.id.progressBar)
+        content = view.findViewById(R.id.content)
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -186,7 +187,8 @@ class EditProfileFragment : Fragment() {
 
     //Remove the profile picture
     private fun removeProfilePicture() {
-//        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+        content.visibility = View.GONE
 
         val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
             .setDisplayName(etUsername.text.toString().trim())
@@ -195,7 +197,8 @@ class EditProfileFragment : Fragment() {
 
         firebaseUser.updateProfile(request)
             .addOnCompleteListener { task ->
-//                progressBar.visibility = View.GONE
+                progressBar.visibility = View.GONE
+                content.visibility = View.VISIBLE
 
                 if (task.isSuccessful) {
 
@@ -224,11 +227,14 @@ class EditProfileFragment : Fragment() {
 
         val fileReference: StorageReference = fileStorage.child("images/$strFileName")
 
-//        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+        content.visibility = View.GONE
 
         fileReference.putFile(localFileUri)
             .addOnCompleteListener { task ->
-//                progressBar.visibility = View.GONE
+                progressBar.visibility = View.GONE
+                content.visibility = View.VISIBLE
+
                 if (task.isSuccessful) {
                     fileReference.downloadUrl
                         .addOnSuccessListener {

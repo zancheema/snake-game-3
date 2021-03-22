@@ -198,9 +198,9 @@ class LoginFragment : Fragment() {
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
             val user = User(
-                firebaseUser.displayName!!.replace("\\s".toRegex(), "").toLowerCase(),
+                firebaseUser.displayName?.replace("\\s".toRegex(), "")?.toLowerCase() ?: "",
                 firebaseUser.email!!.trim(),
-                firebaseUser.photoUrl!!.toString(),
+                firebaseUser.photoUrl?.toString() ?: "",
                 token,
             )
             usersCollections.document(user.email)
@@ -226,30 +226,10 @@ class LoginFragment : Fragment() {
             val utils = Utils()
             if (utils.connectionAvailable(requireContext())) {
 
-//                progressBar.visibility = View.VISIBLE
-
-
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
-//                        progressBar.visibility = View.GONE
                         if (task.isSuccessful) {
                             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-
-//                            FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceResult ->
-//                                val utils = Utils()
-//
-//                                utils.updateDeviceToken(requireContext(), instanceResult.token)
-//
-//                                Log.e(
-//                                    "token",
-//                                    "token instance id :  ${instanceResult.token.substringAfter(':')}"
-//                                )
-//
-//
-//                            }
-
-//                            startActivity(Intent(applicationContext, MainActivity::class.java))
-//                            finish()
                         }
                     }.addOnFailureListener { exception ->
                         Toast.makeText(
@@ -258,8 +238,6 @@ class LoginFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-            } else {
-//                startActivity(Intent(applicationContext, NoInternetMessageActivity::class.java))
             }
         }
     }

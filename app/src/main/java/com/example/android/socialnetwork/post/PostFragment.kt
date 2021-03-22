@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.VideoView
+import android.widget.*
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -25,6 +22,8 @@ class PostFragment : Fragment() {
 
     private lateinit var videoPath: String
     private lateinit var videoName: String
+    private lateinit var progressBar: ProgressBar
+    private lateinit var content: View
 
     private lateinit var etPostTitle: TextView
     private lateinit var etPostDescription: TextView
@@ -58,6 +57,8 @@ class PostFragment : Fragment() {
         etPostDescription = view.findViewById(R.id.etPostDescription)
         videoViewPost = view.findViewById(R.id.videoViewPost)
         buttonPost = view.findViewById(R.id.buttonPost)
+        progressBar = view.findViewById(R.id.progressBar)
+        content = view.findViewById(R.id.content)
         videoFile = File(videoPath)
 
         mAuth = FirebaseAuth.getInstance()
@@ -75,6 +76,9 @@ class PostFragment : Fragment() {
     }
 
     private fun upload() {
+        progressBar.visibility = View.VISIBLE
+        content.visibility = View.INVISIBLE
+
         val userId = Firebase.auth.currentUser!!.uid
 
         val storageReference = mStorageRef!!.child("videos/$userId/$videoName")
