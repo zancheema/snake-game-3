@@ -202,7 +202,7 @@ class EditProfileFragment : Fragment() {
                     val map = mapOf(
                         NodeNames.PHOTO to ""
                     )
-                    usersCollection.document(firebaseUser.uid)
+                    usersCollection.document(firebaseUser.email)
                         .update(map)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -248,7 +248,7 @@ class EditProfileFragment : Fragment() {
                                             NodeNames.USERNAME to etUsername.text.toString().trim(),
                                             NodeNames.PHOTO to serverFileUri.toString()
                                         )
-                                        usersCollection.document(firebaseUser.uid)
+                                        usersCollection.document(firebaseUser.email)
                                             .update(map)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
@@ -284,7 +284,7 @@ class EditProfileFragment : Fragment() {
                     val map = mapOf(
                         NodeNames.USERNAME to etUsername.text.toString().trim()
                     )
-                    usersCollection.document(firebaseUser.uid)
+                    usersCollection.document(firebaseUser.email)
                         .update(map)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
