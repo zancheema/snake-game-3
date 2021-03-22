@@ -1,14 +1,16 @@
 package com.example.android.socialnetwork.notification
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
+import com.example.android.socialnetwork.common.Auth
 import com.example.android.socialnetwork.model.Chat
 import com.example.android.socialnetwork.model.Notification
 import com.google.firebase.auth.ktx.auth
@@ -16,11 +18,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
-private const val TAG = "NotificationFragment"
-
 class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestListener {
 
     private lateinit var notificationList: RecyclerView
+    private lateinit var logoutIcon: ImageView
 
     private val firebaseUser = Firebase.auth.currentUser!!
     private val usersCollection = Firebase.firestore.collection("users")
@@ -40,21 +41,24 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
         super.onViewCreated(view, savedInstanceState)
 
         notificationList = view.findViewById(R.id.notificationList)
+        logoutIcon = view.findViewById(R.id.logoutIcon)
+
         val notificationListAdapter = NotificationListAdapter(this)
         notificationList.adapter = notificationListAdapter
         refreshNotifications(notificationListAdapter)
+
+        logoutIcon.setOnClickListener {
+            Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
+        }
     }
 
     override fun onAcceptFriendRequest(notification: Notification) {
-        Log.d(TAG, "sender email: ${notification.senderEmail}")
-        Log.d(TAG, "receiver email: ${notification.receiverEmail}")
-
         val newNotification = Notification(
             "friendRequestAccepted",
             UUID.randomUUID().toString(),
-            "",
             firebaseUser.displayName,
-            firebaseUser.photoUrl.toString(),
+            "${firebaseUser.displayName} accepted your friend request",
+            firebaseUser.photoUrl?.toString() ?: "",
             notification.receiverEmail,
             notification.receiverToken,
             notification.senderEmail,
@@ -65,7 +69,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
             .set(newNotification)
             .addOnSuccessListener {
                 val chat = Chat(
-                    newNotification.senderName,
+                    newNotification.title,
                     newNotification.senderEmail,
                     newNotification.senderToken,
                     newNotification.photoUrl
@@ -76,7 +80,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                     .set(chat)
                     .addOnSuccessListener {
                         val chat = Chat(
-                            notification.senderName,
+                            notification.title,
                             notification.senderEmail,
                             notification.senderToken,
                             notification.photoUrl

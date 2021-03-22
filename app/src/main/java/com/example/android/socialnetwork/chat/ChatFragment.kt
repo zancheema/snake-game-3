@@ -13,12 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
 import com.example.android.socialnetwork.model.ChatMessage
+import com.example.android.socialnetwork.model.Notification
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class ChatFragment : Fragment() {
 
@@ -28,6 +30,7 @@ class ChatFragment : Fragment() {
     private lateinit var chat: Chat
     private lateinit var otherChatMessagesCollection: CollectionReference
     private lateinit var myChatMessagesCollection: CollectionReference
+    private lateinit var notificationsCollection: CollectionReference
     private lateinit var sendMessage: View
     private lateinit var etMessage: EditText
     private lateinit var tvUsername: TextView
@@ -55,6 +58,11 @@ class ChatFragment : Fragment() {
             .collection("messages")
         otherChatMessagesCollection = otherChatDoc
             .collection("messages")
+
+        notificationsCollection = Firebase.firestore
+            .collection("users")
+            .document(chat.userEmail)
+            .collection("notifications")
     }
 
     override fun onCreateView(
@@ -107,6 +115,21 @@ class ChatFragment : Fragment() {
                 )
             )
 
+            // send chat message notifcation
+            val notification = Notification(
+                "chatMessageSent",
+                UUID.randomUUID().toString(),
+                firebaseUser.displayName ?: "",
+                message,
+                firebaseUser.photoUrl?.toString() ?: "",
+                firebaseUser.email,
+                "",
+                chat.userEmail,
+                chat.messagingToken,
+                System.currentTimeMillis()
+            )
+            notificationsCollection.add(notification)
+
             // listen to new messages
             myChatMessagesCollection.addSnapshotListener { snap, error ->
                 if (error != null) {
@@ -116,7 +139,7 @@ class ChatFragment : Fragment() {
                 }
                 val messages = getChatMessages(snap!!)
                 messageListAdapter.submitList(messages)
-                messageList.scrollToPosition(messageListAdapter.itemCount)
+                messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
             }
 
             refreshChatMessages(messageListAdapter)
@@ -133,7 +156,7 @@ class ChatFragment : Fragment() {
             .addOnSuccessListener { snap ->
                 val messages = getChatMessages(snap)
                 messageListAdapter.submitList(messages)
-                messageList.scrollToPosition(messageListAdapter.itemCount)
+                messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
             }
     }
 

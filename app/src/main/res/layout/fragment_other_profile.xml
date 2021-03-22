@@ -79,23 +79,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_bg_light"
         android:text="@string/add_friend"
-        app:layout_constraintBaseline_toBaselineOf="@+id/buttonMessage"
-        app:layout_constraintEnd_toStartOf="@+id/buttonMessage"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonMessage"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/button_gray_bg"
-        android:text="@string/message"
-        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/ivProfilePic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonAddFriend"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfilePic" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvUserDescription"
