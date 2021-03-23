@@ -139,7 +139,9 @@ class ChatFragment : Fragment() {
                 }
                 val messages = getChatMessages(snap!!)
                 messageListAdapter.submitList(messages)
-                messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                if (messageListAdapter.itemCount > 0) {
+                    messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                }
             }
 
             refreshChatMessages(messageListAdapter)
@@ -156,7 +158,9 @@ class ChatFragment : Fragment() {
             .addOnSuccessListener { snap ->
                 val messages = getChatMessages(snap)
                 messageListAdapter.submitList(messages)
-                messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                if (messageListAdapter.itemCount > 0) {
+                    messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                }
             }
     }
 
