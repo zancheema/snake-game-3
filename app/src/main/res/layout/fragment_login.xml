@@ -68,10 +68,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/tvForgotPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="@string/forgot_password" />
 
         <androidx.appcompat.widget.AppCompatButton

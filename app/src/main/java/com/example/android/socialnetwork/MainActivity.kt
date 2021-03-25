@@ -1,5 +1,6 @@
 package com.example.android.socialnetwork
 
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -38,6 +39,13 @@ class MainActivity : AppCompatActivity() {
                     bottomNav.visibility = View.VISIBLE
                 } else {
                     bottomNav.visibility = View.GONE
+                }
+
+                // orientation
+                if (listOf(R.id.loginFragment, R.id.signUpFragment).contains(destination.id)) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                } else {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 }
             }
         }

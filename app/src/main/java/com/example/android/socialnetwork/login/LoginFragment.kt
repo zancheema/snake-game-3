@@ -48,6 +48,7 @@ class LoginFragment : Fragment() {
     private lateinit var etPassword: TextInputEditText
     private lateinit var buttonGoogleSignIn: FloatingActionButton
     private lateinit var buttonFacebookLogin: FloatingActionButton
+    private lateinit var tvForgotPassword: TextView
 
     //variables for checking info & send info to firebase
     private lateinit var email: String
@@ -75,6 +76,7 @@ class LoginFragment : Fragment() {
         etPassword = view.findViewById(R.id.etPassword)
         buttonGoogleSignIn = view.findViewById(R.id.buttonGoogleLogin)
         buttonFacebookLogin = view.findViewById(R.id.buttonFacebookLogin)
+        tvForgotPassword = view.findViewById(R.id.tvForgotPassword)
 
         auth = Firebase.auth
 
@@ -93,6 +95,9 @@ class LoginFragment : Fragment() {
         }
         buttonGoogleSignIn.setOnClickListener {
             googleSignIn()
+        }
+        tvForgotPassword.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
         loginManager.registerCallback(callbackManager, object :
             FacebookCallback<LoginResult> {
