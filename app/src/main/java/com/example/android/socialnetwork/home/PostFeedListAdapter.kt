@@ -36,7 +36,7 @@ class PostFeedListAdapter(
                     .load(post.userPhotoUrl)
                     .placeholder(R.drawable.ic_baseline_person_24)
                     .error(R.drawable.ic_baseline_person_24)
-                    .into(findViewById<ImageView>(R.id.imagePostUser))
+                    .into(findViewById(R.id.imagePostUser))
 
                 val format = SimpleDateFormat("MMM d, h:mm a", Locale.US)
                 val dateTime = format.format(Date(post.timeStamp))
@@ -47,6 +47,16 @@ class PostFeedListAdapter(
                     start()
                     setOnCompletionListener { // set video playback repeating
                         start()
+                    }
+                    setOnPreparedListener { mediaPlayer ->
+                        val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+                        val screenRatio = this.width / this.height.toFloat()
+                        val scaleX = videoRatio / screenRatio
+                        if (scaleX >= 1f) {
+                            this.scaleX = scaleX
+                        } else {
+                            this.scaleY = 1f / scaleX
+                        }
                     }
                 }
             }
