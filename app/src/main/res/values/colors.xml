@@ -16,4 +16,5 @@
     <color name="button_color_light">#8CC2E3</color>
     <color name="notification">#b6bde1</color>
     <color name="dark_overlay">#80FFFFFF</color>
+    <color name="twitter_blue">#1DA1F2</color>
 </resources>
