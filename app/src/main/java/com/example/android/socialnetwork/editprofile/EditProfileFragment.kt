@@ -7,9 +7,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -27,16 +26,23 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-class EditProfileFragment : Fragment() {
+private const val TAG = "EditProfileFragment"
+
+class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     private lateinit var etUsername: TextInputEditText
     private lateinit var etEmail: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var etConfirmPassword: TextInputEditText
     private lateinit var ivProfilePic: ImageView
     private lateinit var logoutIcon: ImageView
     private lateinit var changePictureButton: Button
     private lateinit var saveChangesButton: Button
+    private lateinit var buttonShowPassword: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var content: View
+
+    private var password: String? = null
 
     //firebase variables
     private lateinit var mAuth: FirebaseAuth
@@ -51,12 +57,12 @@ class EditProfileFragment : Fragment() {
     ////TODO removed lateinit ...
     private var serverFileUri: Uri? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            password = it.getString("password")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,12 +70,27 @@ class EditProfileFragment : Fragment() {
 
         etUsername = view.findViewById(R.id.etPostTitle)
         etEmail = view.findViewById(R.id.etEmail)
+        etPassword = view.findViewById(R.id.etPassword)
+        etConfirmPassword = view.findViewById(R.id.etConfirmPassword)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         logoutIcon = view.findViewById(R.id.logoutIcon)
         changePictureButton = view.findViewById(R.id.buttonChangePicture)
         saveChangesButton = view.findViewById(R.id.buttonSaveChanges)
+        buttonShowPassword = view.findViewById(R.id.buttonShowPassword)
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
+
+        if (password != null) {
+            etPassword.isEnabled = true
+            etPassword.setText(password)
+            etConfirmPassword.setText(password)
+            etConfirmPassword.isEnabled = true
+
+            buttonShowPassword.visibility = View.GONE
+        } else {
+            etPassword.setText("******")
+            etConfirmPassword.setText("******")
+        }
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -97,6 +118,9 @@ class EditProfileFragment : Fragment() {
         }
         saveChangesButton.setOnClickListener {
             saveChanges()
+        }
+        buttonShowPassword.setOnClickListener {
+            findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
         }
     }
 
@@ -223,6 +247,8 @@ class EditProfileFragment : Fragment() {
 
     //Save username and profile photo information to firebase
     private fun updateNameAndProfilePhoto() {
+        Log.d(TAG, "updateNameAndProfilePhoto: called")
+
         val strFileName: String = firebaseUser.uid + ".jpg"
 
         val fileReference: StorageReference = fileStorage.child("images/$strFileName")
@@ -236,6 +262,8 @@ class EditProfileFragment : Fragment() {
                 content.visibility = View.VISIBLE
 
                 if (task.isSuccessful) {
+                    updatePasswordIfRequired()
+
                     fileReference.downloadUrl
                         .addOnSuccessListener {
                             serverFileUri = it
@@ -258,6 +286,11 @@ class EditProfileFragment : Fragment() {
                                             .update(map)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Profile updated successfully",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                     findNavController().popBackStack()
                                                 }
                                             }
@@ -276,6 +309,7 @@ class EditProfileFragment : Fragment() {
 
     //Save only username info to firebase
     private fun updateOnlyName() {
+        Log.d(TAG, "updateOnlyName: called")
 //        progressBar.visibility = View.VISIBLE
 
         val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
@@ -283,21 +317,26 @@ class EditProfileFragment : Fragment() {
             .build()
 
         firebaseUser.updateProfile(request)
-            .addOnCompleteListener { task ->
+            .addOnSuccessListener {
 //                progressBar.visibility = View.GONE
 
-                if (task.isSuccessful) {
-                    val map = mapOf(
-                        NodeNames.USERNAME to etUsername.text.toString().trim()
-                    )
-                    usersCollection.document(firebaseUser.email)
-                        .update(map)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                findNavController().popBackStack()
-                            }
+                updatePasswordIfRequired()
+
+                val map = mapOf(
+                    NodeNames.USERNAME to etUsername.text.toString().trim()
+                )
+                usersCollection.document(firebaseUser.email)
+                    .update(map)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                "Profile updated successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            findNavController().popBackStack()
                         }
-                }
+                    }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     requireContext(),
@@ -305,5 +344,22 @@ class EditProfileFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+    }
+
+    private fun updatePasswordIfRequired() {
+
+        val pass1 = etPassword.text.toString()
+        val pass2 = etConfirmPassword.text.toString()
+        Log.d(TAG, "updatePassword: called: $pass1, $pass2")
+
+        if (pass1 != password && pass1 == pass2) {
+            firebaseUser.updatePassword(pass1)
+        } else {
+            Toast.makeText(
+                context,
+                "The passwords did not match and could not be updated",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

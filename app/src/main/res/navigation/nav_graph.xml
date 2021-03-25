@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.android.socialnetwork.login.LoginFragment"
+        android:name="com.example.android.socialnetwork.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -71,7 +71,15 @@
         android:id="@+id/editProfileFragment"
         android:name="com.example.android.socialnetwork.editprofile.EditProfileFragment"
         android:label="fragment_edit_profile"
-        tools:layout="@layout/fragment_edit_profile" />
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfileFragment_to_reAuthFragment"
+            app:destination="@id/reAuthFragment" />
+        <argument
+            android:name="password"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/postFragment"
         android:name="com.example.android.socialnetwork.post.PostFragment"
@@ -116,4 +124,15 @@
         android:name="com.example.android.socialnetwork.forgotpassword.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/reAuthFragment"
+        android:name="com.example.android.socialnetwork.auth.ReAuthFragment"
+        android:label="fragment_re_auth"
+        tools:layout="@layout/fragment_re_auth" >
+        <action
+            android:id="@+id/action_reAuthFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment"
+            app:popUpTo="@id/editProfileFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

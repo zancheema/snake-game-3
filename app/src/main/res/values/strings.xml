@@ -49,4 +49,6 @@
     <string name="sample_notification_time">7:45 PM</string>
     <string name="notifications">Notifications</string>
     <string name="send_email">Send Email</string>
+    <string name="confirm">Confirm</string>
+    <string name="show_password">Show Password</string>
 </resources>

@@ -62,7 +62,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <VideoView
-                android:id="@+id/videoViewPost"
+                android:id="@+id/imageViewPostVideo"
                 android:layout_width="wrap_content"
                 android:layout_height="400dp"
                 android:layout_gravity="center"

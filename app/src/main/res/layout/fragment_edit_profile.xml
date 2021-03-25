@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="16dp"
     tools:context=".editprofile.EditProfileFragment">
 
     <androidx.constraintlayout.widget.Group
@@ -18,7 +19,7 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="40dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:src="@drawable/app_logo"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintEnd_toStartOf="@+id/title"
@@ -160,10 +161,21 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonShowPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_red_bg"
+        android:text="@string/show_password"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSaveChanges"
+        app:layout_constraintStart_toStartOf="@+id/buttonSaveChanges"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSaveChanges" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonSaveChanges"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/button_bg_light"
         android:paddingHorizontal="50dp"
         android:text="@string/save_changes"

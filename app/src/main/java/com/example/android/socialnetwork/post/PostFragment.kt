@@ -55,7 +55,7 @@ class PostFragment : Fragment() {
 
         etPostTitle = view.findViewById(R.id.etPostTitle)
         etPostDescription = view.findViewById(R.id.etPostDescription)
-        videoViewPost = view.findViewById(R.id.videoViewPost)
+        videoViewPost = view.findViewById(R.id.imageViewPostVideo)
         buttonPost = view.findViewById(R.id.buttonPost)
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
