@@ -16,12 +16,11 @@ import java.util.*
 
 class PostFeedListAdapter(
     private val onClickUsername: (String) -> Unit = {},
-    private val onClickVideo: (Post) -> Unit = {}
 ) : ListAdapter<Post, PostFeedListAdapter.ViewHolder>(PostDiffUtil()) {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(post: Post, onClickUserName: (String) -> Unit, onClickVideo: (Post) -> Unit) {
+        fun bind(post: Post, onClickUserName: (String) -> Unit) {
             itemView.apply {
                 findViewById<TextView>(R.id.tvUsername).apply {
                     text = post.username.replace("\\s".toRegex(), "").toLowerCase()
@@ -42,31 +41,17 @@ class PostFeedListAdapter(
                 val dateTime = format.format(Date(post.timeStamp))
                 findViewById<TextView>(R.id.tvPostTime).text = dateTime
 
-                Glide
-                    .with(context)
-                    .asBitmap()
-                    .load(post.videoUrl)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(findViewById(R.id.imageViewPostVideo))
-
-//                findViewById<VideoView>(R.id.imageViewPostVideo).apply {
-//                    setVideoPath(post.videoUrl)
-//                    start()
-//                    setOnCompletionListener { // set video playback repeating
-//                        start()
-//                    }
-////                    setOnPreparedListener { mediaPlayer ->
-////                        val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
-////                        val screenRatio = this.width / this.height.toFloat()
-////                        val scaleX = videoRatio / screenRatio
-////                        if (scaleX >= 1f) {
-////                            this.scaleX = scaleX
-////                        } else {
-////                            this.scaleY = 1f / scaleX
-////                        }
-////                    }
-//                }
+                val videoViewPost = findViewById<VideoView>(R.id.videoViewPost)
+                videoViewPost.setVideoPath(post.videoUrl)
+                val viewPlayVideo = findViewById<View>(R.id.viewPlayVideo)
+                videoViewPost.start()
+                videoViewPost.setOnCompletionListener {
+                    viewPlayVideo.visibility = View.VISIBLE
+                }
+                viewPlayVideo.setOnClickListener {
+                    videoViewPost.start()
+                    it.visibility = View.GONE
+                }
             }
         }
     }
@@ -78,7 +63,7 @@ class PostFeedListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), onClickUsername, onClickVideo)
+        holder.bind(getItem(position), onClickUsername)
     }
 }
 
