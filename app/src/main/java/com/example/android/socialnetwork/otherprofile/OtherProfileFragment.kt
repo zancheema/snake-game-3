@@ -28,6 +28,7 @@ class OtherProfileFragment : Fragment() {
     private lateinit var ivProfilePic: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvEmail: TextView
+    private lateinit var tvUserBio: TextView
     private lateinit var buttonAddFriend: Button
 
     private lateinit var userEmail: String
@@ -61,6 +62,7 @@ class OtherProfileFragment : Fragment() {
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvEmail = view.findViewById(R.id.tvEmail)
+        tvUserBio = view.findViewById(R.id.tvUserBio)
         buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
 
         usersCollection.document(firebaseUser.email).get()
@@ -77,6 +79,9 @@ class OtherProfileFragment : Fragment() {
 
                 val username = otherUser.username.replace("\\s".toRegex(), "").toLowerCase()
                 tvUsername.text = "@$username"
+
+                tvUserBio.text = otherUser.bio
+
                 Glide
                     .with(requireContext())
                     .load(otherUser.photoUrl)

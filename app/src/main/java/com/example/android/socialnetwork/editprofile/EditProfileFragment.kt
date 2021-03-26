@@ -11,17 +11,20 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.Auth
 import com.example.android.socialnetwork.common.NodeNames
+import com.example.android.socialnetwork.model.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -34,6 +37,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var etConfirmPassword: TextInputEditText
+    private lateinit var etUserBio: TextInputEditText
     private lateinit var ivProfilePic: ImageView
     private lateinit var logoutIcon: ImageView
     private lateinit var changePictureButton: Button
@@ -41,6 +45,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private lateinit var buttonShowPassword: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var content: View
+
+    private lateinit var user: User
 
     private var password: String? = null
 
@@ -72,6 +78,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         etEmail = view.findViewById(R.id.etEmail)
         etPassword = view.findViewById(R.id.etPassword)
         etConfirmPassword = view.findViewById(R.id.etConfirmPassword)
+        etUserBio = view.findViewById(R.id.etUserBio)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         logoutIcon = view.findViewById(R.id.logoutIcon)
         changePictureButton = view.findViewById(R.id.buttonChangePicture)
@@ -79,6 +86,33 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         buttonShowPassword = view.findViewById(R.id.buttonShowPassword)
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
+
+        mAuth = FirebaseAuth.getInstance()
+        firebaseUser = mAuth.currentUser!!
+        fileStorage = FirebaseStorage.getInstance().reference
+
+        Firebase.firestore.collection("users")
+            .document(firebaseUser.email)
+            .get()
+            .addOnSuccessListener { snap ->
+                user = snap.toObject(User::class.java)!!
+
+                serverFileUri = Uri.parse(user.photoUrl)
+                if (serverFileUri != null) {
+                    Glide.with(this)
+                        .load(serverFileUri)
+                        .placeholder(R.drawable.ic_baseline_person_24)
+                        .error(R.drawable.ic_baseline_person_24)
+                        .into(ivProfilePic)
+                }
+
+                etUsername.setText(user.username)
+                etEmail.setText(user.email)
+                etUserBio.setText(user.bio)
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to load user data: $it", Toast.LENGTH_SHORT).show()
+            }
 
         if (password != null) {
             etPassword.isEnabled = true
@@ -92,24 +126,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             etConfirmPassword.setText("******")
         }
 
-        mAuth = FirebaseAuth.getInstance()
-
-        firebaseUser = mAuth.currentUser!!
-
-        fileStorage = FirebaseStorage.getInstance().reference
-
-        etUsername.setText(firebaseUser.displayName)
-        etEmail.setText(firebaseUser.email)
-        serverFileUri = firebaseUser.photoUrl
-
-        if (serverFileUri != null) {
-            Glide.with(this)
-                .load(serverFileUri)
-                .placeholder(R.drawable.ic_baseline_person_24)
-                .error(R.drawable.ic_baseline_person_24)
-                .into(ivProfilePic)
-        }
-
         logoutIcon.setOnClickListener {
             Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
         }
@@ -121,6 +137,24 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
         buttonShowPassword.setOnClickListener {
             findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
+        }
+        etUserBio.setOnClickListener {
+            Firebase.firestore.collection("users")
+                .document(firebaseUser.email)
+                .get()
+                .addOnSuccessListener { snap ->
+                    val user = snap.toObject(User::class.java)
+                    val args = bundleOf(
+                        "user" to user
+                    )
+                    findNavController().navigate(
+                        R.id.action_editProfileFragment_to_editBioFragment,
+                        args
+                    )
+                }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Failed to edit bio: $it", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 

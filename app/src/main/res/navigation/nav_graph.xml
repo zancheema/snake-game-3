@@ -79,6 +79,9 @@
             android:name="password"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_editProfileFragment_to_editBioFragment"
+            app:destination="@id/editBioFragment" />
     </fragment>
     <fragment
         android:id="@+id/postFragment"
@@ -134,5 +137,14 @@
             app:destination="@id/editProfileFragment"
             app:popUpTo="@id/editProfileFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/editBioFragment"
+        android:name="com.example.android.socialnetwork.editbio.EditBioFragment"
+        android:label="fragment_edit_bio"
+        tools:layout="@layout/fragment_edit_bio" >
+        <argument
+            android:name="user"
+            app:argType="com.example.android.socialnetwork.model.User" />
     </fragment>
 </navigation>

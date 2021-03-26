@@ -79,16 +79,18 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_bg_light"
         android:text="@string/add_friend"
-        app:layout_constraintTop_toBottomOf="@id/ivProfilePic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivProfilePic" />
 
     <TextView
-        android:id="@+id/tvUserDescription"
+        android:id="@+id/tvUserBio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:ellipsize="end"
+        android:maxLines="@integer/max_lines_user_bio"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

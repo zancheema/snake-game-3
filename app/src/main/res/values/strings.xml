@@ -51,4 +51,5 @@
     <string name="send_email">Send Email</string>
     <string name="confirm">Confirm</string>
     <string name="show_password">Show Password</string>
+    <string name="bio">Enter User Bio</string>
 </resources>
