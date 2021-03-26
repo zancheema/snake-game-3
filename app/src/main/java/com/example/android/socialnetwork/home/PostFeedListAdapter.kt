@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Post
+import com.example.android.socialnetwork.model.User
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,21 +24,29 @@ class PostFeedListAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(post: Post, onClickUserName: (String) -> Unit) {
-            itemView.apply {
-                findViewById<TextView>(R.id.tvUsername).apply {
-                    text = post.username.replace("\\s".toRegex(), "").toLowerCase()
-                    setOnClickListener {
-                        onClickUserName(post.userEmail)
+            Firebase.firestore.collection("users").document(post.userEmail)
+                .get()
+                .addOnSuccessListener { snap ->
+                    val user = snap.toObject(User::class.java)!!
+                    itemView.apply {
+                        findViewById<TextView>(R.id.tvUsername).apply {
+                            text = user.username.replace("\\s".toRegex(), "").toLowerCase()
+                            setOnClickListener {
+                                onClickUserName(post.userEmail)
+                            }
+                        }
+                        Glide
+                            .with(context)
+                            .load(user.photoUrl)
+                            .placeholder(R.drawable.ic_baseline_person_24)
+                            .error(R.drawable.ic_baseline_person_24)
+                            .into(findViewById(R.id.imagePostUser))
                     }
                 }
+
+            itemView.apply {
                 findViewById<TextView>(R.id.tvPostTitle).text = post.title
                 findViewById<TextView>(R.id.tvPostDescription).text = post.description
-                Glide
-                    .with(context)
-                    .load(post.userPhotoUrl)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(findViewById(R.id.imagePostUser))
 
                 val format = SimpleDateFormat("MMM d, h:mm a", Locale.US)
                 val dateTime = format.format(Date(post.timeStamp))
