@@ -42,10 +42,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // orientation
-                if (listOf(R.id.loginFragment, R.id.signUpFragment).contains(destination.id)) {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                requestedOrientation = if (destination.id == R.id.recordVideoFragment) {
+                    ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 } else {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
             }
         }

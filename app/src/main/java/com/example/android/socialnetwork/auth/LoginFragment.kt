@@ -202,17 +202,30 @@ class LoginFragment : Fragment() {
         val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
-            val user = User(
-                firebaseUser.displayName?.replace("\\s".toRegex(), "")?.toLowerCase() ?: "",
-                firebaseUser.email!!.trim(),
-                firebaseUser.photoUrl?.toString() ?: "",
-                token,
-            )
-            usersCollections.document(user.email)
-                .set(user)
-                .addOnSuccessListener {
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                }
+            usersCollections.document(firebaseUser.email).apply {
+                get()
+                    .addOnSuccessListener { snap ->
+                        // add user data to database only if not added before
+                        if (snap.data == null) {
+                            val user = User(
+                                firebaseUser.displayName?.replace("\\s".toRegex(), "")?.toLowerCase() ?: "",
+                                firebaseUser.email!!.trim(),
+                                firebaseUser.photoUrl?.toString() ?: "",
+                                token,
+                            )
+                            usersCollections.document(user.email)
+                                .set(user)
+                                .addOnSuccessListener {
+                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }
+                        } else {
+                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                        }
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG, "onFailure: $it")
+                    }
+            }
         }
     }
 

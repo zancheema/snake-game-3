@@ -18,7 +18,9 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.common.Auth
+import com.example.android.socialnetwork.model.User
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class ProfileFragment : Fragment() {
@@ -26,6 +28,7 @@ class ProfileFragment : Fragment() {
     //variables from xml layout file
     private lateinit var userName: TextView
     private lateinit var profileName: TextView
+    private lateinit var tvUserBio: TextView
     private lateinit var ivProfilePic: ImageView
     private lateinit var email: TextView
     private lateinit var logoutIcon: ImageView
@@ -48,25 +51,32 @@ class ProfileFragment : Fragment() {
 
         userName = view.findViewById(R.id.tvUsername)
         profileName = view.findViewById(R.id.tvProfileName)
+        tvUserBio = view.findViewById(R.id.tvUserBio)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         email = view.findViewById(R.id.tvEmail)
         logoutIcon = view.findViewById(R.id.logoutIcon)
         editProfileButton = view.findViewById(R.id.editProfileButton)
 
-        Firebase.auth.currentUser?.let { user ->
-            val name = user.displayName?.replace("\\s".toRegex(), "")?.toLowerCase()
-            userName.text = "@${name}"
-            profileName.text = name
-            email.text = user.email
-            serverFileUri = user.photoUrl
 
-            if (serverFileUri != null) {
-                Glide.with(this)
-                    .load(serverFileUri)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(ivProfilePic)
+
+        Firebase.firestore.collection("users")
+            .document(Firebase.auth.currentUser.email)
+            .get()
+            .addOnSuccessListener { snap ->
+                val user = snap.toObject(User::class.java)!!
+                userName.text = "@${user.username}"
+                profileName.text = user.username
+                email.text = user.email
+                tvUserBio.text = user.bio
+                serverFileUri = Uri.parse(user.photoUrl)
             }
+
+        if (serverFileUri != null) {
+            Glide.with(this)
+                .load(serverFileUri)
+                .placeholder(R.drawable.ic_baseline_person_24)
+                .error(R.drawable.ic_baseline_person_24)
+                .into(ivProfilePic)
         }
 
         logoutIcon.setOnClickListener {
