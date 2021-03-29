@@ -32,8 +32,9 @@
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/openChat"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_message_filled"

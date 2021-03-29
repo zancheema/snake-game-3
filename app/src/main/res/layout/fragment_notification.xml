@@ -29,15 +29,16 @@
         android:text="@string/notifications"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/logoutIcon"
+        app:layout_constraintEnd_toStartOf="@+id/buttonLogout"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/logoutIcon"
+    <ImageButton
+        android:id="@+id/buttonLogout"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_logout"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintEnd_toEndOf="parent"

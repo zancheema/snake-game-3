@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -24,7 +21,7 @@ import java.util.*
 class OtherProfileFragment : Fragment() {
 
     private lateinit var tvUsername: TextView
-    private lateinit var logoutIcon: View
+    private lateinit var buttonLogout: ImageButton
     private lateinit var ivProfilePic: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvEmail: TextView
@@ -58,7 +55,7 @@ class OtherProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         tvUsername = view.findViewById(R.id.tvUsername)
-        logoutIcon = view.findViewById(R.id.logoutIcon)
+        buttonLogout = view.findViewById(R.id.buttonLogout)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvEmail = view.findViewById(R.id.tvEmail)
@@ -126,7 +123,7 @@ class OtherProfileFragment : Fragment() {
                 }
         }
 
-        logoutIcon.setOnClickListener {
+        buttonLogout.setOnClickListener {
             Auth.logoutAndNavigateToLogin(
                 requireActivity(),
                 findNavController()

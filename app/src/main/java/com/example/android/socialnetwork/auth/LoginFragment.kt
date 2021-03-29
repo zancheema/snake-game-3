@@ -30,6 +30,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -48,6 +49,7 @@ class LoginFragment : Fragment() {
     private lateinit var etPassword: TextInputEditText
     private lateinit var buttonGoogleSignIn: FloatingActionButton
     private lateinit var buttonFacebookLogin: FloatingActionButton
+    private lateinit var buttonTwitterLogin: FloatingActionButton
     private lateinit var tvForgotPassword: TextView
 
     //variables for checking info & send info to firebase
@@ -76,6 +78,7 @@ class LoginFragment : Fragment() {
         etPassword = view.findViewById(R.id.etPassword)
         buttonGoogleSignIn = view.findViewById(R.id.buttonGoogleLogin)
         buttonFacebookLogin = view.findViewById(R.id.buttonFacebookLogin)
+        buttonTwitterLogin = view.findViewById(R.id.buttonTwitterLogin)
         tvForgotPassword = view.findViewById(R.id.tvForgotPassword)
 
         auth = Firebase.auth
@@ -120,6 +123,9 @@ class LoginFragment : Fragment() {
                 this,
                 listOf("email", "public_profile")
             )
+        }
+        buttonTwitterLogin.setOnClickListener {
+//            loginWithTwitter()
         }
     }
 

@@ -9,10 +9,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -31,7 +28,7 @@ class ProfileFragment : Fragment() {
     private lateinit var tvUserBio: TextView
     private lateinit var ivProfilePic: ImageView
     private lateinit var email: TextView
-    private lateinit var logoutIcon: ImageView
+    private lateinit var buttonLogout: ImageButton
     private lateinit var editProfileButton: Button
 
     private lateinit var localFileUri: Uri
@@ -54,7 +51,7 @@ class ProfileFragment : Fragment() {
         tvUserBio = view.findViewById(R.id.tvUserBio)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         email = view.findViewById(R.id.tvEmail)
-        logoutIcon = view.findViewById(R.id.logoutIcon)
+        buttonLogout = view.findViewById(R.id.buttonLogout)
         editProfileButton = view.findViewById(R.id.editProfileButton)
 
 
@@ -79,7 +76,7 @@ class ProfileFragment : Fragment() {
                 .into(ivProfilePic)
         }
 
-        logoutIcon.setOnClickListener {
+        buttonLogout.setOnClickListener {
             btnLogoutClick()
         }
         editProfileButton.setOnClickListener {

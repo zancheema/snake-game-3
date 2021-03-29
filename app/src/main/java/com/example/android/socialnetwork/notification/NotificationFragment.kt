@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -21,7 +21,7 @@ import java.util.*
 class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestListener {
 
     private lateinit var notificationList: RecyclerView
-    private lateinit var logoutIcon: ImageView
+    private lateinit var buttonLogout: ImageButton
 
     private val firebaseUser = Firebase.auth.currentUser!!
     private val usersCollection = Firebase.firestore.collection("users")
@@ -41,13 +41,13 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
         super.onViewCreated(view, savedInstanceState)
 
         notificationList = view.findViewById(R.id.notificationList)
-        logoutIcon = view.findViewById(R.id.logoutIcon)
+        buttonLogout = view.findViewById(R.id.buttonLogout)
 
         val notificationListAdapter = NotificationListAdapter(this)
         notificationList.adapter = notificationListAdapter
         refreshNotifications(notificationListAdapter)
 
-        logoutIcon.setOnClickListener {
+        buttonLogout.setOnClickListener {
             Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
         }
     }

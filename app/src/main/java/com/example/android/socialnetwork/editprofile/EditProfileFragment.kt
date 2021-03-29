@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -39,7 +38,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private lateinit var etConfirmPassword: TextInputEditText
     private lateinit var etUserBio: TextInputEditText
     private lateinit var ivProfilePic: ImageView
-    private lateinit var logoutIcon: ImageView
+    private lateinit var buttonLogout: ImageButton
     private lateinit var changePictureButton: Button
     private lateinit var saveChangesButton: Button
     private lateinit var buttonShowPassword: Button
@@ -80,7 +79,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         etConfirmPassword = view.findViewById(R.id.etConfirmPassword)
         etUserBio = view.findViewById(R.id.etUserBio)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
-        logoutIcon = view.findViewById(R.id.logoutIcon)
+        buttonLogout = view.findViewById(R.id.buttonLogout)
         changePictureButton = view.findViewById(R.id.buttonChangePicture)
         saveChangesButton = view.findViewById(R.id.buttonSaveChanges)
         buttonShowPassword = view.findViewById(R.id.buttonShowPassword)
@@ -126,7 +125,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             etConfirmPassword.setText("******")
         }
 
-        logoutIcon.setOnClickListener {
+        buttonLogout.setOnClickListener {
             Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
         }
         changePictureButton.setOnClickListener {
