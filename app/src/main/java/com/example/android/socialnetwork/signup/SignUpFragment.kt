@@ -234,12 +234,13 @@ class SignUpFragment : Fragment() {
                                         )
                                             .getString("token", "no-token")!!
                                         val user = User(
-                                            etUsername.text.toString().trim(),
-                                            etEmail.text.toString().trim(),
-                                            serverFileUri.path.toString(),
-                                            token
+                                            uid = firebaseUser.uid,
+                                            username = etUsername.text.toString().trim(),
+                                            email = etEmail.text.toString().trim(),
+                                            photoUrl = serverFileUri.path.toString(),
+                                            messagingToken = token
                                         )
-                                        usersCollection.document(user.email).set(user)
+                                        usersCollection.document(user.uid).set(user)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     Toast.makeText(
@@ -288,12 +289,13 @@ class SignUpFragment : Fragment() {
 
                     // save user to firestore users collection
                     val user = User(
-                        etUsername.text.toString().trim(),
-                        etEmail.text.toString().trim(),
-                        "",
-                        token
+                        uid = firebaseUser.uid,
+                        username = etUsername.text.toString().trim(),
+                        email = etEmail.text.toString().trim(),
+                        photoUrl = "",
+                        messagingToken = token
                     )
-                    usersCollection.document(user.email).set(user)
+                    usersCollection.document(user.uid).set(user)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Toast.makeText(

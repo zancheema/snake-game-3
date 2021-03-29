@@ -6,9 +6,9 @@ data class Notification(
     val title: String = "",
     val body: String = "",
     val photoUrl: String = "",
-    val senderEmail: String = "",
+    val senderUid: String = "",
     val senderToken: String = "",
-    val receiverEmail: String = "",
+    val receiverUid: String = "",
     val receiverToken: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )

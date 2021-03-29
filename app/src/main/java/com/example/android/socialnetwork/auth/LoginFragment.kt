@@ -125,7 +125,7 @@ class LoginFragment : Fragment() {
             )
         }
         buttonTwitterLogin.setOnClickListener {
-//            loginWithTwitter()
+            loginWithTwitter()
         }
     }
 
@@ -151,6 +151,27 @@ class LoginFragment : Fragment() {
         } else {
             Log.d(TAG, "onActivityResult: does not match any request code")
         }
+    }
+
+    private fun loginWithTwitter() {
+        val provider = OAuthProvider.newBuilder("twitter.com")
+        Firebase.auth
+            .startActivityForSignInWithProvider(requireActivity(), provider.build())
+            .addOnSuccessListener { authResult ->
+                Log.d(TAG, "loginWithTwitter email: ${authResult.user.providerData[0].email}")
+                Log.d(
+                    TAG,
+                    "loginWithTwitter phoneNumber: ${authResult.user.providerData[0].phoneNumber}"
+                )
+                Log.d(
+                    TAG,
+                    "loginWithTwitter email verified: ${authResult.user.providerData[0].isEmailVerified}"
+                )
+                saveUserDataAndOpenFeed()
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "loginWithTwitter error: $it")
+            }
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
@@ -208,19 +229,20 @@ class LoginFragment : Fragment() {
         val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
-            usersCollections.document(firebaseUser.email).apply {
+            usersCollections.document(firebaseUser.uid).apply {
                 get()
                     .addOnSuccessListener { snap ->
                         // add user data to database only if not added before
                         if (snap.data == null) {
                             val user = User(
-                                firebaseUser.displayName?.replace("\\s".toRegex(), "")?.toLowerCase() ?: "",
-                                firebaseUser.email!!.trim(),
-                                firebaseUser.photoUrl?.toString() ?: "",
-                                token,
+                                uid = firebaseUser.uid,
+                                username = firebaseUser.displayName?.replace("\\s".toRegex(), "")
+                                    ?.toLowerCase() ?: "",
+                                email = firebaseUser.email?.trim() ?: "",
+                                photoUrl = firebaseUser.photoUrl?.toString() ?: "",
+                                messagingToken = token,
                             )
-                            usersCollections.document(user.email)
-                                .set(user)
+                            set(user)
                                 .addOnSuccessListener {
                                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                                 }

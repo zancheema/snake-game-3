@@ -39,7 +39,7 @@ class EditBioFragment : Fragment(R.layout.fragment_edit_bio) {
             )
 
             Firebase.firestore.collection("users")
-                .document(user.email)
+                .document(user.uid)
                 .update(bioArgs)
                 .addOnSuccessListener {
                     Toast.makeText(context, "Bio updated successfully", Toast.LENGTH_SHORT).show()

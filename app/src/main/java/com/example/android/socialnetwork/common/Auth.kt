@@ -27,7 +27,7 @@ object Auth {
     ) {
         // update user status in database
         val userDoc =
-            Firebase.firestore.collection("users").document(Firebase.auth.currentUser.email)
+            Firebase.firestore.collection("users").document(Firebase.auth.currentUser.uid)
         userDoc.get()
             .addOnSuccessListener { snap ->
                 val user =

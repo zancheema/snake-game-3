@@ -92,7 +92,7 @@ class PostFragment : Fragment() {
                 val user = mAuth!!.currentUser!!
 
                 val post = Post(
-                    user.email!!,
+                    user.uid,
                     downloadURL,
                     etPostTitle.text.toString(),
                     etPostDescription.text.toString()

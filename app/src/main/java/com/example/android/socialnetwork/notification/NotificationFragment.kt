@@ -26,7 +26,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
     private val firebaseUser = Firebase.auth.currentUser!!
     private val usersCollection = Firebase.firestore.collection("users")
     private val notificationCollection =
-        usersCollection.document(firebaseUser.email)
+        usersCollection.document(firebaseUser.uid)
             .collection("notifications")
 
     override fun onCreateView(
@@ -59,35 +59,35 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
             firebaseUser.displayName,
             "${firebaseUser.displayName} accepted your friend request",
             firebaseUser.photoUrl?.toString() ?: "",
-            notification.receiverEmail,
+            notification.receiverUid,
             notification.receiverToken,
-            notification.senderEmail,
+            notification.senderUid,
             notification.senderToken
         )
-        usersCollection.document(notification.senderEmail).collection("notifications")
-            .document(newNotification.receiverEmail)
+        usersCollection.document(notification.senderUid).collection("notifications")
+            .document(newNotification.receiverUid)
             .set(newNotification)
             .addOnSuccessListener {
                 val chat = Chat(
                     newNotification.title,
-                    newNotification.senderEmail,
+                    newNotification.senderUid,
                     newNotification.senderToken,
                     newNotification.photoUrl
                 )
-                usersCollection.document(newNotification.receiverEmail)
+                usersCollection.document(newNotification.receiverUid)
                     .collection("chats")
-                    .document(chat.userEmail)
+                    .document(chat.userUid)
                     .set(chat)
                     .addOnSuccessListener {
                         val chat = Chat(
                             notification.title,
-                            notification.senderEmail,
+                            notification.senderUid,
                             notification.senderToken,
                             notification.photoUrl
                         )
-                        usersCollection.document(notification.receiverEmail)
+                        usersCollection.document(notification.receiverUid)
                             .collection("chats")
-                            .document(chat.userEmail)
+                            .document(chat.userUid)
                             .set(chat)
                             .addOnSuccessListener {
                                 deleteNotification(notification.notificationId)

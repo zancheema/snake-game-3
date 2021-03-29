@@ -28,7 +28,7 @@ class OtherProfileFragment : Fragment() {
     private lateinit var tvUserBio: TextView
     private lateinit var buttonAddFriend: Button
 
-    private lateinit var userEmail: String
+    private lateinit var otherUserUid: String
     private lateinit var otherUser: User
     private lateinit var currentUser: User
 
@@ -39,8 +39,8 @@ class OtherProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        userEmail = arguments?.getString("userEmail")!!
-        notificationCollection = usersCollection.document(userEmail).collection("notifications")
+        otherUserUid = arguments?.getString("userUid")!!
+        notificationCollection = usersCollection.document(otherUserUid).collection("notifications")
     }
 
     override fun onCreateView(
@@ -62,7 +62,7 @@ class OtherProfileFragment : Fragment() {
         tvUserBio = view.findViewById(R.id.tvUserBio)
         buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
 
-        usersCollection.document(firebaseUser.email).get()
+        usersCollection.document(firebaseUser.uid).get()
             .addOnSuccessListener {
                 currentUser = it.toObject(User::class.java)!!
             }
@@ -70,7 +70,7 @@ class OtherProfileFragment : Fragment() {
                 Toast.makeText(context, "Failed to load current user", Toast.LENGTH_SHORT).show()
             }
 
-        usersCollection.document(userEmail).get()
+        usersCollection.document(otherUserUid).get()
             .addOnSuccessListener {
                 otherUser = it.toObject(User::class.java)!!
 
@@ -93,7 +93,7 @@ class OtherProfileFragment : Fragment() {
                 findNavController().popBackStack()
             }
 
-        usersCollection.document(userEmail).get()
+        usersCollection.document(otherUserUid).get()
             .addOnSuccessListener {
                 otherUser = it.toObject(User::class.java)!!
             }
@@ -109,9 +109,9 @@ class OtherProfileFragment : Fragment() {
                 currentUser.username,
                 "Let's be friends",
                 currentUser.photoUrl,
-                currentUser.email,
+                currentUser.uid,
                 currentUser.messagingToken,
-                otherUser.email,
+                otherUser.uid,
                 otherUser.messagingToken
             )
             notificationCollection.document(notification.notificationId).set(notification)

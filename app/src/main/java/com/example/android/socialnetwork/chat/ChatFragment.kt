@@ -44,15 +44,15 @@ class ChatFragment : Fragment() {
         chat = requireArguments().getParcelable("chat")!!
         myChatDoc = Firebase.firestore
             .collection("users")
-            .document(firebaseUser.email!!)
+            .document(firebaseUser.uid)
             .collection("chats")
-            .document(chat.userEmail)
+            .document(chat.userUid)
 
         otherChatDoc = Firebase.firestore
             .collection("users")
-            .document(chat.userEmail)
+            .document(chat.userUid)
             .collection("chats")
-            .document(firebaseUser.email!!)
+            .document(firebaseUser.uid)
 
         myChatMessagesCollection = myChatDoc
             .collection("messages")
@@ -61,7 +61,7 @@ class ChatFragment : Fragment() {
 
         notificationsCollection = Firebase.firestore
             .collection("users")
-            .document(chat.userEmail)
+            .document(chat.userUid)
             .collection("notifications")
     }
 
@@ -122,11 +122,10 @@ class ChatFragment : Fragment() {
                 firebaseUser.displayName ?: "",
                 message,
                 firebaseUser.photoUrl?.toString() ?: "",
-                firebaseUser.email,
+                firebaseUser.uid,
                 "",
-                chat.userEmail,
-                chat.messagingToken,
-                System.currentTimeMillis()
+                chat.userUid,
+                chat.messagingToken
             )
             notificationsCollection.add(notification)
 

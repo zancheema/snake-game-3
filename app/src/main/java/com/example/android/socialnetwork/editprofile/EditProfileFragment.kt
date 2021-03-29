@@ -91,7 +91,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         fileStorage = FirebaseStorage.getInstance().reference
 
         Firebase.firestore.collection("users")
-            .document(firebaseUser.email)
+            .document(firebaseUser.uid)
             .get()
             .addOnSuccessListener { snap ->
                 user = snap.toObject(User::class.java)!!
@@ -110,7 +110,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 etUserBio.setText(user.bio)
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Failed to load user data: $it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to load user data: $it", Toast.LENGTH_SHORT).show()
             }
 
         if (password != null) {
@@ -139,7 +139,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
         etUserBio.setOnClickListener {
             Firebase.firestore.collection("users")
-                .document(firebaseUser.email)
+                .document(firebaseUser.uid)
                 .get()
                 .addOnSuccessListener { snap ->
                     val user = snap.toObject(User::class.java)
@@ -152,7 +152,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     )
                 }
                 .addOnFailureListener {
-                    Toast.makeText(context, "Failed to edit bio: $it", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to edit bio: $it", Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -262,7 +262,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     val map = mapOf(
                         NodeNames.PHOTO to ""
                     )
-                    usersCollection.document(firebaseUser.email)
+                    usersCollection.document(firebaseUser.uid)
                         .update(map)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -315,12 +315,12 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                                             NodeNames.USERNAME to etUsername.text.toString().trim(),
                                             NodeNames.PHOTO to serverFileUri.toString()
                                         )
-                                        usersCollection.document(firebaseUser.email)
+                                        usersCollection.document(firebaseUser.uid)
                                             .update(map)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     Toast.makeText(
-                                                        context,
+                                                        requireContext(),
                                                         "Profile updated successfully",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
@@ -358,12 +358,12 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 val map = mapOf(
                     NodeNames.USERNAME to etUsername.text.toString().trim()
                 )
-                usersCollection.document(firebaseUser.email)
+                usersCollection.document(firebaseUser.uid)
                     .update(map)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(
-                                context,
+                                requireContext(),
                                 "Profile updated successfully",
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -389,7 +389,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             firebaseUser.updatePassword(pass1)
         } else {
             Toast.makeText(
-                context,
+                requireContext(),
                 "The passwords did not match and could not be updated",
                 Toast.LENGTH_SHORT
             ).show()

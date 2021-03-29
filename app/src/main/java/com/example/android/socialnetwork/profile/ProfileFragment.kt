@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
 
 
         Firebase.firestore.collection("users")
-            .document(Firebase.auth.currentUser.email)
+            .document(Firebase.auth.currentUser.uid)
             .get()
             .addOnSuccessListener { snap ->
                 val user = snap.toObject(User::class.java)!!

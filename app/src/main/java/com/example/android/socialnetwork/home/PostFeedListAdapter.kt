@@ -24,7 +24,7 @@ class PostFeedListAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(post: Post, onClickUserName: (String) -> Unit) {
-            Firebase.firestore.collection("users").document(post.userEmail)
+            Firebase.firestore.collection("users").document(post.userUid)
                 .get()
                 .addOnSuccessListener { snap ->
                     val user = snap.toObject(User::class.java)!!
@@ -32,7 +32,7 @@ class PostFeedListAdapter(
                         findViewById<TextView>(R.id.tvUsername).apply {
                             text = user.username.replace("\\s".toRegex(), "").toLowerCase()
                             setOnClickListener {
-                                onClickUserName(post.userEmail)
+                                onClickUserName(post.userUid)
                             }
                         }
                         Glide
