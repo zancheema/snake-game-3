@@ -61,12 +61,22 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <VideoView
-                android:id="@+id/videoViewPost"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/videoViewParent"
+                android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:background="@color/black">
+
+                <VideoView
+                    android:id="@+id/videoViewPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:scaleType="fitCenter" />
+            </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
