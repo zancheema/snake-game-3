@@ -65,11 +65,7 @@ class RecordVideoFragment : Fragment() {
         setUpFilters()
 
         if (!allPermissionsGranted()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
-            )
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
         if (allPermissionsGranted()) {
