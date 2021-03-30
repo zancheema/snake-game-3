@@ -86,6 +86,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
 
+        showDataLoading()
+
         mAuth = FirebaseAuth.getInstance()
         firebaseUser = mAuth.currentUser!!
         fileStorage = FirebaseStorage.getInstance().reference
@@ -108,9 +110,45 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 etUsername.setText(user.username)
                 etEmail.setText(user.email)
                 etUserBio.setText(user.bio)
+
+                buttonLogout.setOnClickListener {
+                    Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
+                }
+                changePictureButton.setOnClickListener {
+                    changeImage(it)
+                }
+                saveChangesButton.setOnClickListener {
+                    saveChanges()
+                }
+                buttonShowPassword.setOnClickListener {
+                    if (user.email.isNotBlank()) {
+                        findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Password can be only changed for email login",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                etUserBio.setOnClickListener {
+                    val args = bundleOf(
+                        "user" to user
+                    )
+                    findNavController().navigate(
+                        R.id.action_editProfileFragment_to_editBioFragment,
+                        args
+                    )
+                }
+                showContent()
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to load user data: $it", Toast.LENGTH_SHORT).show()
+                showContent()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load user data: $it",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         if (password != null) {
@@ -123,37 +161,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         } else {
             etPassword.setText("******")
             etConfirmPassword.setText("******")
-        }
-
-        buttonLogout.setOnClickListener {
-            Auth.logoutAndNavigateToLogin(requireActivity(), findNavController())
-        }
-        changePictureButton.setOnClickListener {
-            changeImage(it)
-        }
-        saveChangesButton.setOnClickListener {
-            saveChanges()
-        }
-        buttonShowPassword.setOnClickListener {
-            findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
-        }
-        etUserBio.setOnClickListener {
-            Firebase.firestore.collection("users")
-                .document(firebaseUser.uid)
-                .get()
-                .addOnSuccessListener { snap ->
-                    val user = snap.toObject(User::class.java)
-                    val args = bundleOf(
-                        "user" to user
-                    )
-                    findNavController().navigate(
-                        R.id.action_editProfileFragment_to_editBioFragment,
-                        args
-                    )
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Failed to edit bio: $it", Toast.LENGTH_SHORT).show()
-                }
         }
     }
 
@@ -244,8 +251,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     //Remove the profile picture
     private fun removeProfilePicture() {
-        progressBar.visibility = View.VISIBLE
-        content.visibility = View.GONE
+        showDataLoading()
 
         val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
             .setDisplayName(etUsername.text.toString().trim())
@@ -254,8 +260,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         firebaseUser.updateProfile(request)
             .addOnCompleteListener { task ->
-                progressBar.visibility = View.GONE
-                content.visibility = View.VISIBLE
+                showContent()
 
                 if (task.isSuccessful) {
 
@@ -286,13 +291,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         val fileReference: StorageReference = fileStorage.child("images/$strFileName")
 
-        progressBar.visibility = View.VISIBLE
-        content.visibility = View.GONE
+        showDataLoading()
 
         fileReference.putFile(localFileUri)
             .addOnCompleteListener { task ->
-                progressBar.visibility = View.GONE
-                content.visibility = View.VISIBLE
+                showContent()
 
                 if (task.isSuccessful) {
                     updatePasswordIfRequired()
@@ -338,6 +341,16 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                         }
                 }
             }
+    }
+
+    private fun showContent() {
+        progressBar.visibility = View.GONE
+        content.visibility = View.VISIBLE
+    }
+
+    private fun showDataLoading() {
+        progressBar.visibility = View.VISIBLE
+        content.visibility = View.GONE
     }
 
     //Save only username info to firebase

@@ -12,7 +12,7 @@
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="buttonLogout,title,buttonSaveChanges,etConfirmPasswordLayout,etPasswordLayout,etUsernameLayout,ivProfilePic,imageView,etEmailLayout,buttonChangePicture"
+        app:constraint_referenced_ids="buttonLogout,title,buttonSaveChanges,etConfirmPasswordLayout,etPasswordLayout,etUsernameLayout,ivProfilePic,imageView,etEmailLayout,buttonChangePicture,etUserBioLayout"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="24dp" />
 
@@ -43,9 +43,9 @@
 
     <ImageButton
         android:id="@+id/buttonLogout"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_logout"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -176,13 +176,13 @@
             android:id="@+id/etUserBio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="@string/dummy_paragraph"
-            android:inputType="none"
-            android:focusable="false"
             android:clickable="true"
-            android:maxLines="1"
             android:ellipsize="end"
-            android:hint="@string/bio" />
+            android:focusable="false"
+            android:hint="@string/bio"
+            android:inputType="none"
+            android:maxLines="1"
+            tools:text="@string/dummy_paragraph" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
