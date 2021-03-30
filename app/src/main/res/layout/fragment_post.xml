@@ -62,7 +62,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <RelativeLayout
-                android:id="@+id/videoViewParent"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:layout_marginTop="16dp"
