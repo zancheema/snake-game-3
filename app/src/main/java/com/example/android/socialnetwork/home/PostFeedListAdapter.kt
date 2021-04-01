@@ -55,7 +55,6 @@ class PostFeedListAdapter(
                 val videoViewPost = findViewById<VideoView>(R.id.videoViewPost)
                 videoViewPost.setVideoPath(post.videoUrl)
                 val viewPlayVideo = findViewById<View>(R.id.viewPlayVideo)
-                videoViewPost.start()
                 videoViewPost.setOnCompletionListener {
                     viewPlayVideo.visibility = View.VISIBLE
                 }
