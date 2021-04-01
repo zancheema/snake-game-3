@@ -19,6 +19,7 @@
         android:id="@+id/tvChatMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_chat_message_other"
         android:gravity="start"
         android:maxWidth="@dimen/max_width_chat_message"
         android:padding="8dp"
