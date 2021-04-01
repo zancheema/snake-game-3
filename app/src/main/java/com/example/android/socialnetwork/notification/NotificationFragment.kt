@@ -115,6 +115,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                 for (doc in snap.documents) {
                     notifications.add(doc.toObject(Notification::class.java)!!)
                 }
+                notifications.sortByDescending { it.timestamp }
                 notificationListAdapter.submitList(notifications)
             }
             .addOnFailureListener { e ->

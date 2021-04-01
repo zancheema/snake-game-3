@@ -106,8 +106,8 @@ class OtherProfileFragment : Fragment() {
             val notification = Notification(
                 "friendRequestSent",
                 UUID.randomUUID().toString(),
-                currentUser.username,
-                "Let's be friends",
+                "${currentUser.username} has requested to friend you",
+                "",
                 currentUser.photoUrl,
                 currentUser.uid,
                 currentUser.messagingToken,

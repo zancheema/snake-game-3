@@ -226,6 +226,7 @@ class LoginFragment : Fragment() {
      * So, all sign up credentials are stored at login
      */
     private fun saveUserDataAndOpenFeed() {
+        Log.d(TAG, "saveUserDataAndOpenFeed: called")
         val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
@@ -247,7 +248,14 @@ class LoginFragment : Fragment() {
                                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                                 }
                         } else {
-                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            val updatedFields = mapOf(
+                                "messagingToken" to token,
+                                "online" to true
+                            )
+                            update(updatedFields)
+                                .addOnSuccessListener {
+                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }
                         }
                     }
                     .addOnFailureListener {
