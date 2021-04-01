@@ -324,7 +324,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                                                 if (task.isSuccessful) {
                                                     Toast.makeText(
                                                         requireContext(),
-                                                        "Profile updated successfully",
+                                                        "The update was successful",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                     findNavController().popBackStack()
@@ -334,7 +334,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                                 }.addOnFailureListener { exception ->
                                     Toast.makeText(
                                         requireContext(),
-                                        "Fail to update profile: ${exception.localizedMessage}",
+                                        "Update Failed: ${exception.localizedMessage}",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
