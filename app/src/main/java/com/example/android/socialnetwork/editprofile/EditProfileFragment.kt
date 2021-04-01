@@ -131,15 +131,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                         ).show()
                     }
                 }
-                etUserBio.setOnClickListener {
-                    val args = bundleOf(
-                        "user" to user
-                    )
-                    findNavController().navigate(
-                        R.id.action_editProfileFragment_to_editBioFragment,
-                        args
-                    )
-                }
                 showContent()
             }
             .addOnFailureListener {
@@ -316,7 +307,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
                                         val map = mapOf(
                                             NodeNames.USERNAME to etUsername.text.toString().trim(),
-                                            NodeNames.PHOTO to serverFileUri.toString()
+                                            NodeNames.PHOTO to serverFileUri.toString(),
+                                            NodeNames.USER_BIO to etUserBio.text.toString()
                                         )
                                         usersCollection.document(firebaseUser.uid)
                                             .update(map)
@@ -369,7 +361,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 updatePasswordIfRequired()
 
                 val map = mapOf(
-                    NodeNames.USERNAME to etUsername.text.toString().trim()
+                    NodeNames.USERNAME to etUsername.text.toString().trim(),
+                    NodeNames.USER_BIO to etUserBio.text.toString()
                 )
                 usersCollection.document(firebaseUser.uid)
                     .update(map)

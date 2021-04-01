@@ -6,6 +6,7 @@ object NodeNames {
 
     const val USERNAME: String = "username"
     const val TOKENS: String = "tokens"
+    const val USER_BIO = "bio"
 
     //PHOTO FILE NAME
     const val PHOTO: String = "photoUrl"
