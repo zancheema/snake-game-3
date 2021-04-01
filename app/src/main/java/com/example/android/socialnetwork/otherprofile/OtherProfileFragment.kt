@@ -36,6 +36,8 @@ class OtherProfileFragment : Fragment() {
     private val usersCollection = Firebase.firestore.collection("users")
     private lateinit var notificationCollection: CollectionReference
 
+    private val notificationId = "friend-request-${firebaseUser.uid}"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,6 +63,53 @@ class OtherProfileFragment : Fragment() {
         tvEmail = view.findViewById(R.id.tvEmail)
         tvUserBio = view.findViewById(R.id.tvUserBio)
         buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
+
+        notificationCollection
+            .document(notificationId)
+            .get()
+            .addOnSuccessListener { snap ->
+                if (snap.data != null) {
+                    buttonAddFriend.text = "Friend Request Sent"
+                } else {
+                    usersCollection
+                        .document(firebaseUser.uid)
+                        .collection("chats")
+                        .document(otherUserUid)
+                        .get()
+                        .addOnSuccessListener { snap ->
+                            if (snap.data != null) {
+                                buttonAddFriend.text = "Friends"
+                            } else {
+                                buttonAddFriend.setOnClickListener {
+
+                                    val notification = Notification(
+                                        "friendRequestSent",
+                                        notificationId,
+                                        "${currentUser.username} has requested to friend you",
+                                        "",
+                                        currentUser.photoUrl,
+                                        currentUser.uid,
+                                        currentUser.messagingToken,
+                                        otherUser.uid,
+                                        otherUser.messagingToken
+                                    )
+                                    notificationCollection.document(notification.notificationId)
+                                        .set(notification)
+                                        .addOnSuccessListener {
+                                            buttonAddFriend.text = "Friend Request Sent"
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(
+                                                context,
+                                                "Error sending request: $it",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                            }
+                        }
+                }
+            }
 
         usersCollection.document(firebaseUser.uid).get()
             .addOnSuccessListener {
@@ -92,36 +141,6 @@ class OtherProfileFragment : Fragment() {
                 Toast.makeText(context, "Failed to load user", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
-
-        usersCollection.document(otherUserUid).get()
-            .addOnSuccessListener {
-                otherUser = it.toObject(User::class.java)!!
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to load current user", Toast.LENGTH_SHORT).show()
-            }
-
-        buttonAddFriend.setOnClickListener {
-
-            val notification = Notification(
-                "friendRequestSent",
-                UUID.randomUUID().toString(),
-                "${currentUser.username} has requested to friend you",
-                "",
-                currentUser.photoUrl,
-                currentUser.uid,
-                currentUser.messagingToken,
-                otherUser.uid,
-                otherUser.messagingToken
-            )
-            notificationCollection.document(notification.notificationId).set(notification)
-                .addOnSuccessListener {
-                    Toast.makeText(context, "Friend Request Sent", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(context, "Error sending request: $it", Toast.LENGTH_SHORT).show()
-                }
-        }
 
         buttonLogout.setOnClickListener {
             Auth.logoutAndNavigateToLogin(
