@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Post
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -34,10 +36,15 @@ class HomeFragment : Fragment() {
         postFeed = view.findViewById(R.id.postFeed)
         openChat = view.findViewById(R.id.openChat)
         val postFeedAdapter = PostFeedListAdapter { uid ->
-            val args = bundleOf(
-                "userUid" to uid
-            )
-            findNavController().navigate(R.id.action_homeFragment_to_otherProfileFragment, args)
+            if (uid == Firebase.auth.currentUser!!.uid) {
+                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNav)
+                    .selectedItemId = R.id.profileFragment
+            } else {
+                val args = bundleOf(
+                    "userUid" to uid
+                )
+                findNavController().navigate(R.id.action_homeFragment_to_otherProfileFragment, args)
+            }
         }
         postFeed.adapter = postFeedAdapter
 
