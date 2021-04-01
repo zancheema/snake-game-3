@@ -153,6 +153,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 saveUserDataAndOpenFeed()
             }
             .addOnFailureListener {
+                Toast.makeText(requireContext(), "Login Failed: $it", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "loginWithTwitter error: $it")
             }
     }
@@ -185,6 +186,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 if (task.isSuccessful) {
                     saveUserDataAndOpenFeed()
                 } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Login failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                 }
@@ -244,6 +250,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                     .addOnFailureListener {
                         showContent()
+                        Toast.makeText(requireContext(), "Login Failed: $it", Toast.LENGTH_SHORT)
+                            .show()
                         Log.d(TAG, "onFailure: $it")
                     }
             }
@@ -284,13 +292,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Login failed: ${task.exception?.localizedMessage}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    }.addOnFailureListener { exception ->
-                        Toast.makeText(
-                            requireContext(),
-                            "Login failed: ${exception.localizedMessage}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
             }
         }
