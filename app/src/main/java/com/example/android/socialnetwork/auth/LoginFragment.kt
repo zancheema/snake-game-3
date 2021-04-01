@@ -4,9 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -38,13 +36,14 @@ import com.google.firebase.ktx.Firebase
 private const val TAG = "LoginFragment"
 private const val RC_SIGN_IN: Int = 0
 
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var callbackManager: CallbackManager
     private lateinit var loginManager: LoginManager
 
     //variables from xml layout file
+    private lateinit var progress: View
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var buttonGoogleSignIn: FloatingActionButton
@@ -59,14 +58,6 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private val usersCollections = Firebase.firestore.collection("users")
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -74,6 +65,7 @@ class LoginFragment : Fragment() {
         callbackManager = CallbackManager.Factory.create()
         loginManager = LoginManager.getInstance()
 
+        progress = view.findViewById(R.id.progress)
         etEmail = view.findViewById(R.id.etEmail)
         etPassword = view.findViewById(R.id.etPassword)
         buttonGoogleSignIn = view.findViewById(R.id.buttonGoogleLogin)
@@ -157,16 +149,7 @@ class LoginFragment : Fragment() {
         val provider = OAuthProvider.newBuilder("twitter.com")
         Firebase.auth
             .startActivityForSignInWithProvider(requireActivity(), provider.build())
-            .addOnSuccessListener { authResult ->
-                Log.d(TAG, "loginWithTwitter email: ${authResult.user.providerData[0].email}")
-                Log.d(
-                    TAG,
-                    "loginWithTwitter phoneNumber: ${authResult.user.providerData[0].phoneNumber}"
-                )
-                Log.d(
-                    TAG,
-                    "loginWithTwitter email verified: ${authResult.user.providerData[0].isEmailVerified}"
-                )
+            .addOnSuccessListener {
                 saveUserDataAndOpenFeed()
             }
             .addOnFailureListener {
@@ -226,7 +209,8 @@ class LoginFragment : Fragment() {
      * So, all sign up credentials are stored at login
      */
     private fun saveUserDataAndOpenFeed() {
-        Log.d(TAG, "saveUserDataAndOpenFeed: called")
+        showProgress()
+
         val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
             .getString("token", "no-token")!!
         auth.currentUser?.let { firebaseUser ->
@@ -259,10 +243,26 @@ class LoginFragment : Fragment() {
                         }
                     }
                     .addOnFailureListener {
+                        showContent()
                         Log.d(TAG, "onFailure: $it")
                     }
             }
         }
+    }
+
+    private fun showContent() {
+        etEmail.isEnabled = true
+        etPassword.isEnabled = true
+
+        progress.visibility = View.GONE
+    }
+
+    private fun showProgress() {
+        // to stop edit texts from gaining focus
+        etEmail.isEnabled = false
+        etPassword.isEnabled = false
+
+        progress.visibility = View.VISIBLE
     }
 
     //When log in button is clicked
