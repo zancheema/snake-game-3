@@ -210,7 +210,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     //change the profile image when the profile icon is clicked
-    fun changeImage(v: View) {
+    private fun changeImage(v: View) {
         if (serverFileUri == null) {
             pickProfilePicture()
         } else {
@@ -398,14 +398,16 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val pass2 = etConfirmPassword.text.toString()
         Log.d(TAG, "updatePassword: called: $pass1, $pass2")
 
-        if (pass1 != password && pass1 == pass2) {
-            firebaseUser.updatePassword(pass1)
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "The passwords did not match and could not be updated",
-                Toast.LENGTH_SHORT
-            ).show()
+        if (pass1 != password) {
+            if (pass1 == pass2) {
+                firebaseUser.updatePassword(pass1)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "The passwords did not match and could not be updated",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }
