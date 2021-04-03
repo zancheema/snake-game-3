@@ -185,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/bio"
                 android:inputType="none"
+                android:maxLength="@integer/max_length_user_bio"
                 tools:text="@string/dummy_paragraph" />
 
         </com.google.android.material.textfield.TextInputLayout>
