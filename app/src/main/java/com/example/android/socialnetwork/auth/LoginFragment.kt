@@ -153,7 +153,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 saveUserDataAndOpenFeed()
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Login Failed: $it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "loginWithTwitter error: $it")
             }
     }
@@ -172,7 +172,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(
-                        context, "Authentication failed: ${task.exception}",
+                        context, "an error has occurred",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -188,7 +188,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Login failed: ${task.exception?.message}",
+                        "an error has occurred",
                         Toast.LENGTH_SHORT
                     ).show()
                     // If sign in fails, display a message to the user.
@@ -197,7 +197,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     requireContext(),
-                    "Login failed: ${exception.localizedMessage}",
+                    "an error has occurred",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -250,7 +250,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                     .addOnFailureListener {
                         showContent()
-                        Toast.makeText(requireContext(), "Login Failed: $it", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT)
                             .show()
                         Log.d(TAG, "onFailure: $it")
                     }
@@ -295,7 +295,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         } else {
                             Toast.makeText(
                                 requireContext(),
-                                "Login failed: ${task.exception?.localizedMessage}",
+                                "an error has occurred",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

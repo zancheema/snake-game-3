@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -61,6 +58,9 @@ class ProfileFragment : Fragment() {
                     .placeholder(R.drawable.ic_baseline_person_24)
                     .error(R.drawable.ic_baseline_person_24)
                     .into(ivProfilePic)
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT).show()
             }
 
         buttonLogout.setOnClickListener {

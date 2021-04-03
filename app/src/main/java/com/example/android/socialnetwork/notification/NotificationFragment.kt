@@ -94,7 +94,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                             }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(context, "Task failed: $it", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
                     }
             }
     }
@@ -119,7 +119,11 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                 notificationListAdapter.submitList(notifications)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Error loading notification: $e", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "an error has occurred",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
 }

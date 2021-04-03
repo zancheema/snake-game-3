@@ -137,7 +137,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 showContent()
                 Toast.makeText(
                     requireContext(),
-                    "Failed to load user data: $it",
+                    "an error has occurred",
                     Toast.LENGTH_SHORT
                 ).show()
             }

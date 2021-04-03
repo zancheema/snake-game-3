@@ -42,7 +42,11 @@ class ReAuthFragment : Fragment(R.layout.fragment_re_auth) {
                     )
                 }
                 .addOnFailureListener {
-                    Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        context,
+                        "an error has occurred",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     findNavController().popBackStack()
                 }

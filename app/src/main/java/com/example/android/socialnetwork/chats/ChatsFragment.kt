@@ -52,13 +52,13 @@ class ChatsFragment : Fragment() {
                 chatsListAdapter.submitList(chats)
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Failed to load chats: $it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
             }
 
         // observe for changes to chats collection
         chatsCollection.addSnapshotListener { snap, error ->
             if (error != null) {
-                Toast.makeText(context, "Error loading chats: $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
                 return@addSnapshotListener
             }
             chatsListAdapter.submitList(getChats(snap!!))

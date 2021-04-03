@@ -190,10 +190,10 @@ class SignUpFragment : Fragment() {
                             updateOnlyName()
                         }
                     }
-                }.addOnFailureListener { exception ->
+                }.addOnFailureListener {
                     Toast.makeText(
                         requireContext(),
-                        "Fail to create user: ${exception.localizedMessage}",
+                        "an error has occurred",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -225,7 +225,6 @@ class SignUpFragment : Fragment() {
                             firebaseUser.updateProfile(request)
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-                                        val userID: String = firebaseUser.uid
 
                                         // add user in firestore users collection
                                         val token = requireContext().getSharedPreferences(
@@ -251,18 +250,18 @@ class SignUpFragment : Fragment() {
                                                     findNavController().popBackStack()
                                                 }
                                             }
-                                            .addOnFailureListener { error ->
+                                            .addOnFailureListener {
                                                 Toast.makeText(
                                                     requireContext(),
-                                                    "Failed to create user: ${error.message}",
+                                                    "an error has occurred",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
                                     }
-                                }.addOnFailureListener { exception ->
+                                }.addOnFailureListener {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Fail to update profile: ${exception.localizedMessage}",
+                                        "an error has occurred",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -306,18 +305,18 @@ class SignUpFragment : Fragment() {
                                 findNavController().popBackStack()
                             }
                         }
-                        .addOnFailureListener { error ->
+                        .addOnFailureListener {
                             Toast.makeText(
                                 requireContext(),
-                                "Failed to create user: ${error.message}",
+                                "an error has occurred",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                 }
-            }.addOnFailureListener { exception ->
+            }.addOnFailureListener {
                 Toast.makeText(
                     requireContext(),
-                    "Fail to update profile: ${exception.localizedMessage}",
+                    "an error has occurred",
                     Toast.LENGTH_LONG
                 ).show()
             }

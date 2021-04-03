@@ -1,6 +1,5 @@
 package com.example.android.socialnetwork.forgotpassword
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -40,7 +39,11 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
                 .addOnFailureListener {
                     progressBar.visibility = View.GONE
                     content.visibility = View.VISIBLE
-                    Toast.makeText(context, "Failed to send email: $it", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "an error has occurred",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }

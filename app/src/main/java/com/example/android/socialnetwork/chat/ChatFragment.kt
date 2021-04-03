@@ -132,7 +132,11 @@ class ChatFragment : Fragment() {
             // listen to new messages
             myChatMessagesCollection.addSnapshotListener { snap, error ->
                 if (error != null) {
-                    Toast.makeText(context, "Failed to load chat: $error", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        context,
+                        "an error has occurred",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     return@addSnapshotListener
                 }
