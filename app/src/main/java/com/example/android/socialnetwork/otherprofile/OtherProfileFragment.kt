@@ -26,6 +26,10 @@ class OtherProfileFragment : Fragment() {
     private lateinit var tvUserBio: TextView
     private lateinit var buttonAddFriend: Button
 
+    private lateinit var content: View
+    private lateinit var progress: View
+
+
     private lateinit var otherUserUid: String
     private lateinit var otherUser: User
     private lateinit var currentUser: User
@@ -61,12 +65,18 @@ class OtherProfileFragment : Fragment() {
         tvUserBio = view.findViewById(R.id.tvUserBio)
         buttonAddFriend = view.findViewById(R.id.buttonAddFriend)
 
+        content = view.findViewById(R.id.content)
+        progress = view.findViewById(R.id.progressBar)
+
+        showProgress()
+
         notificationCollection
             .document(notificationId)
             .get()
             .addOnSuccessListener { snap ->
                 if (snap.data != null) {
                     buttonAddFriend.text = "Friend Request Sent"
+                    showContent()
                 } else {
                     usersCollection
                         .document(firebaseUser.uid)
@@ -76,7 +86,9 @@ class OtherProfileFragment : Fragment() {
                         .addOnSuccessListener { snap ->
                             if (snap.data != null) {
                                 buttonAddFriend.text = "Friends"
+                                showContent()
                             } else {
+                                showContent()
                                 buttonAddFriend.setOnClickListener {
 
                                     val notification = Notification(
@@ -141,5 +153,15 @@ class OtherProfileFragment : Fragment() {
                 findNavController()
             )
         }
+    }
+
+    private fun showContent() {
+        progress.visibility = View.GONE
+        content.visibility = View.VISIBLE
+    }
+
+    private fun showProgress() {
+        progress.visibility = View.VISIBLE
+        content.visibility = View.GONE
     }
 }
