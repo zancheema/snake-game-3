@@ -94,8 +94,8 @@ class OtherProfileFragment : Fragment() {
                                     val notification = Notification(
                                         "friendRequestSent",
                                         notificationId,
+                                        currentUser.username,
                                         "${currentUser.username} has requested to friend you",
-                                        "",
                                         currentUser.photoUrl,
                                         currentUser.uid,
                                         currentUser.messagingToken,
