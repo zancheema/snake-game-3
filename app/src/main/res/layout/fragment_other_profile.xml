@@ -74,7 +74,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ivProfilePic"
         app:layout_constraintStart_toStartOf="@+id/tvProfileName"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
-        tools:text="@string/email" />
+        tools:text="@string/sample_email" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonAddFriend"

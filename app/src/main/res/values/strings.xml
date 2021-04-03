@@ -27,8 +27,10 @@
         when an unknown printer took a galley of type and
         scrambled
     </string>
-    <string name="username">johndoe</string>
-    <string name="email">johndoe@email.com</string>
+    <string name="username">Username</string>
+    <string name="sample_email">johndoe@email.com</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
     <string name="user_handle">/@johndoe</string>
     <string name="change_picture">Change Picture</string>
     <string name="sample_password">******</string>
