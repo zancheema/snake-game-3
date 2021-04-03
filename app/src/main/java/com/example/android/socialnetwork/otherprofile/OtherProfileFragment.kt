@@ -19,7 +19,6 @@ import com.google.firebase.ktx.Firebase
 
 class OtherProfileFragment : Fragment() {
 
-    private lateinit var tvUsername: TextView
     private lateinit var buttonLogout: ImageButton
     private lateinit var ivProfilePic: ImageView
     private lateinit var tvProfileName: TextView
@@ -55,7 +54,6 @@ class OtherProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvUsername = view.findViewById(R.id.tvUsername)
         buttonLogout = view.findViewById(R.id.buttonLogout)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         tvProfileName = view.findViewById(R.id.tvProfileName)
@@ -122,18 +120,14 @@ class OtherProfileFragment : Fragment() {
             .addOnSuccessListener {
                 otherUser = it.toObject(User::class.java)!!
 
-                val username = otherUser.username.replace("\\s".toRegex(), "").toLowerCase()
-                tvUsername.text = "@$username"
-
                 tvUserBio.text = otherUser.bio
-
                 Glide
                     .with(requireContext())
                     .load(otherUser.photoUrl)
                     .placeholder(R.drawable.ic_baseline_person_24)
                     .error(R.drawable.ic_baseline_person_24)
                     .into(ivProfilePic)
-                tvProfileName.text = username
+                tvProfileName.text = otherUser.username
                 tvEmail.text = otherUser.email
             }
             .addOnFailureListener {
