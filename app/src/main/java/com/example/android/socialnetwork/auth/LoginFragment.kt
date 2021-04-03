@@ -111,6 +111,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         })
         buttonFacebookLogin.setOnClickListener {
             Log.d(TAG, "facebook login button: clicked")
+            showProgress()
             loginManager.logInWithReadPermissions(
                 this,
                 listOf("email", "public_profile")
@@ -146,6 +147,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun loginWithTwitter() {
+        showProgress()
         val provider = OAuthProvider.newBuilder("twitter.com")
         Firebase.auth
             .startActivityForSignInWithProvider(requireActivity(), provider.build())
@@ -153,6 +155,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 saveUserDataAndOpenFeed()
             }
             .addOnFailureListener {
+                showContent()
                 Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "loginWithTwitter error: $it")
             }
@@ -170,6 +173,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     saveUserDataAndOpenFeed()
                 } else {
                     // If sign in fails, display a message to the user.
+                    showContent()
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(
                         context, "an error has occurred",
@@ -194,7 +198,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                 }
-            }.addOnFailureListener { exception ->
+            }.addOnFailureListener {
+                showContent()
                 Toast.makeText(
                     requireContext(),
                     "an error has occurred",
@@ -204,6 +209,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun googleSignIn() {
+        showProgress()
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
@@ -215,7 +221,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
      * So, all sign up credentials are stored at login
      */
     private fun saveUserDataAndOpenFeed() {
-        showProgress()
 
         val token = requireContext().getSharedPreferences("MAIN", Context.MODE_PRIVATE)
             .getString("token", "no-token")!!
@@ -235,7 +240,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             )
                             set(user)
                                 .addOnSuccessListener {
-                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                    findNavController().navigate(R.id.action_global_homeFragment)
                                 }
                         } else {
                             val updatedFields = mapOf(
@@ -244,13 +249,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             )
                             update(updatedFields)
                                 .addOnSuccessListener {
-                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                    findNavController().navigate(R.id.action_global_homeFragment)
                                 }
                         }
                     }
                     .addOnFailureListener {
                         showContent()
-                        Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            requireContext(),
+                            "an error has occurred",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                         Log.d(TAG, "onFailure: $it")
                     }
@@ -278,6 +287,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         email = etEmail.text.toString().trim()
         password = etPassword.text.toString().trim()
 
+        showProgress()
         if (email == "") {
             Toast.makeText(requireContext(), getString(R.string.enter_email), Toast.LENGTH_SHORT)
                 .show()
@@ -291,8 +301,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            findNavController().navigate(R.id.action_global_homeFragment)
                         } else {
+                            showContent()
                             Toast.makeText(
                                 requireContext(),
                                 "an error has occurred",

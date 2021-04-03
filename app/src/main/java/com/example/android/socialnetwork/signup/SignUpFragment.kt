@@ -247,7 +247,7 @@ class SignUpFragment : Fragment() {
                                                         "User Successfully Created!",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
-                                                    findNavController().popBackStack()
+                                                    findNavController().navigate(R.id.action_global_homeFragment)
                                                 }
                                             }
                                             .addOnFailureListener {
@@ -302,7 +302,7 @@ class SignUpFragment : Fragment() {
                                     "User Successfully Created!",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                findNavController().popBackStack()
+                                findNavController().navigate(R.id.action_global_homeFragment)
                             }
                         }
                         .addOnFailureListener {
