@@ -1,19 +1,18 @@
 package com.example.android.socialnetwork.chat
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
 import com.example.android.socialnetwork.model.ChatMessage
-import com.example.android.socialnetwork.model.Notification
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -30,7 +29,6 @@ class ChatFragment : Fragment() {
     private lateinit var chat: Chat
     private lateinit var otherChatMessagesCollection: CollectionReference
     private lateinit var myChatMessagesCollection: CollectionReference
-    private lateinit var notificationsCollection: CollectionReference
     private lateinit var sendMessage: View
     private lateinit var etMessage: EditText
     private lateinit var tvUsername: TextView
@@ -58,11 +56,6 @@ class ChatFragment : Fragment() {
             .collection("messages")
         otherChatMessagesCollection = otherChatDoc
             .collection("messages")
-
-        notificationsCollection = Firebase.firestore
-            .collection("users")
-            .document(chat.userUid)
-            .collection("notifications")
     }
 
     override fun onCreateView(
@@ -114,20 +107,6 @@ class ChatFragment : Fragment() {
                     "timestamp" to chatMessage.timestamp
                 )
             )
-
-            // send chat message notifcation
-            val notification = Notification(
-                "chatMessageSent",
-                UUID.randomUUID().toString(),
-                firebaseUser.displayName ?: "",
-                message,
-                firebaseUser.photoUrl?.toString() ?: "",
-                firebaseUser.uid,
-                "",
-                chat.userUid,
-                chat.messagingToken
-            )
-            notificationsCollection.add(notification)
 
             // listen to new messages
             myChatMessagesCollection.addSnapshotListener { snap, error ->
