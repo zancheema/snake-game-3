@@ -175,11 +175,18 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     //result of obtaining permission code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d(TAG, "onActivityResult: called")
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 101) {
             if (resultCode == Activity.RESULT_OK) {
                 localFileUri = data?.data!!
-                ivProfilePic.setImageURI(localFileUri)
+//                ivProfilePic.setImageURI(localFileUri)
+                Glide
+                    .with(this)
+                    .load(localFileUri)
+                    .placeholder(R.drawable.ic_baseline_person_24)
+                    .error(R.drawable.ic_baseline_person_24)
+                    .into(ivProfilePic)
             }
         }
     }
@@ -332,12 +339,16 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                                             .update(map)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
-                                                    Toast.makeText(
-                                                        requireContext(),
-                                                        "The update was successful",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                    findNavController().popBackStack()
+                                                    // requireContext() is prone to throwing exception
+                                                    // if the update is cancelled by user
+                                                    context?.let { ctx ->
+                                                        Toast.makeText(
+                                                            ctx,
+                                                            "The update was successful",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        findNavController().popBackStack()
+                                                    }
                                                 }
                                             }
                                     }
