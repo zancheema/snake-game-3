@@ -18,6 +18,7 @@ import com.example.android.socialnetwork.model.Post
 import com.example.android.socialnetwork.model.TotalUnreadMessages
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -31,11 +32,17 @@ class HomeFragment : Fragment() {
     private lateinit var tvUnreadMessagesCount: TextView
 
     private val postsCollection = Firebase.firestore.collection("posts")
-    private val unreadMessagesDoc = Firebase.firestore
-        .collection("users")
-        .document(Firebase.auth.currentUser!!.uid)
-        .collection("chatFunctions")
-        .document("unreadMessages")
+    private lateinit var unreadMessagesDoc: DocumentReference
+
+    init {
+        Firebase.auth.currentUser?.let { user ->
+            unreadMessagesDoc = Firebase.firestore
+                .collection("users")
+                .document(user.uid)
+                .collection("chatFunctions")
+                .document("unreadMessages")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,6 +95,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpUnreadMessages() {
+        if (!::unreadMessagesDoc.isInitialized) return
         unreadMessagesDoc.apply {
             get()
                 .addOnSuccessListener {

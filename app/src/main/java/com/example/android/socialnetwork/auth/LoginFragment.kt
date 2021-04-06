@@ -103,6 +103,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             override fun onCancel() {
                 Log.d(TAG, "facebook:onCancel")
+                cancelLogin("Facebook")
             }
 
             override fun onError(error: FacebookException) {
@@ -140,10 +141,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.d(TAG, "onActivityResult: ApiException", e)
+                cancelLogin("Google")
             }
         } else {
             Log.d(TAG, "onActivityResult: does not match any request code")
         }
+    }
+
+    private fun cancelLogin(host: String) {
+        showContent()
+        Toast.makeText(requireContext(), "$host login cancelled", Toast.LENGTH_SHORT).show()
     }
 
     private fun loginWithTwitter() {
@@ -156,8 +163,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
             .addOnFailureListener {
                 showContent()
-                Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_SHORT)
+                    .show()
                 Log.d(TAG, "loginWithTwitter error: $it")
+            }
+            .addOnCanceledListener {
+                cancelLogin("Twitter")
+                Log.d(TAG, "loginWithTwitter: cancelled")
             }
     }
 
@@ -181,30 +193,29 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     ).show()
                 }
             }
+            .addOnCanceledListener {
+                Log.d(TAG, "handleFacebookAccessToken: cancelled")
+            }
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    saveUserDataAndOpenFeed()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "an error has occurred",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                }
-            }.addOnFailureListener {
+            .addOnSuccessListener {
+                saveUserDataAndOpenFeed()
+            }
+            .addOnFailureListener {
                 showContent()
                 Toast.makeText(
                     requireContext(),
                     "an error has occurred",
                     Toast.LENGTH_SHORT
                 ).show()
+                Log.w(TAG, "signInWithCredential:failure", it)
+            }
+            .addOnCanceledListener {
+                cancelLogin("Google")
+                Log.d(TAG, "firebaseAuthWithGoogle: cancelled")
             }
     }
 
