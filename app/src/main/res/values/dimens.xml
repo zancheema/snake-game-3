@@ -4,4 +4,6 @@
     <dimen name="button_horizontal_padding">50dp</dimen>
     <dimen name="max_width_chat_message">260dp</dimen>
     <dimen name="corner_radius_chat_message_mine">8dp</dimen>
+    <dimen name="corner_radius_circle">360dp</dimen>
+    <dimen name="background_circle_padding">4dp</dimen>
 </resources>

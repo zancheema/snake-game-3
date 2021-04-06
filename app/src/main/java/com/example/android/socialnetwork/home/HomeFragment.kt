@@ -1,9 +1,13 @@
 package com.example.android.socialnetwork.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -11,16 +15,27 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Post
+import com.example.android.socialnetwork.model.TotalUnreadMessages
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
+private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
 
     private lateinit var postFeed: RecyclerView
     private lateinit var openChat: View
+    private lateinit var tvUnreadMessagesCount: TextView
+
     private val postsCollection = Firebase.firestore.collection("posts")
+    private val unreadMessagesDoc = Firebase.firestore
+        .collection("users")
+        .document(Firebase.auth.currentUser!!.uid)
+        .collection("chatFunctions")
+        .document("unreadMessages")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +48,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tvUnreadMessagesCount = view.findViewById(R.id.tvUnreadMessagesCount)
         postFeed = view.findViewById(R.id.postFeed)
         openChat = view.findViewById(R.id.openChat)
+
+        setUpUnreadMessages()
+        setUpPostFeed()
+
+        openChat.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_chatsFragment)
+        }
+    }
+
+    private fun setUpPostFeed() {
         val postFeedAdapter = PostFeedListAdapter { uid ->
             if (uid == Firebase.auth.currentUser!!.uid) {
                 requireActivity().findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -59,9 +85,32 @@ class HomeFragment : Fragment() {
             .addOnFailureListener { exc ->
                 Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
             }
+    }
 
-        openChat.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_chatsFragment)
+    private fun setUpUnreadMessages() {
+        unreadMessagesDoc.apply {
+            get()
+                .addOnSuccessListener {
+                    processUnreadMessagesSnapshot(it)
+                }
+                .addOnFailureListener {
+                    Log.d(TAG, "setUpUnreadMessages: failure: $it")
+                }
+
+            addSnapshotListener { value, error ->
+                if (error == null && value != null) {
+                    processUnreadMessagesSnapshot(value)
+                }
+            }
+        }
+    }
+
+    private fun processUnreadMessagesSnapshot(it: DocumentSnapshot) {
+        it.toObject(TotalUnreadMessages::class.java)?.let { messages ->
+            tvUnreadMessagesCount.apply {
+                text = messages.totalCount.toString()
+                visibility = if (messages.totalCount > 0) VISIBLE else GONE
+            }
         }
     }
 }
