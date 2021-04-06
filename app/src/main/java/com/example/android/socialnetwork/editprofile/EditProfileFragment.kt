@@ -11,7 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -20,6 +20,7 @@ import com.example.android.socialnetwork.common.Auth
 import com.example.android.socialnetwork.common.NodeNames
 import com.example.android.socialnetwork.model.User
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -86,12 +87,41 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
 
-        showDataLoading()
-
         mAuth = FirebaseAuth.getInstance()
         firebaseUser = mAuth.currentUser!!
         fileStorage = FirebaseStorage.getInstance().reference
 
+        loadContent()
+
+        /** change edit text hint to character limit */
+        etUserBio.doOnTextChanged { _, _, _, _ ->
+            val maxBioLength = resources.getInteger(R.integer.max_length_user_bio)
+            val charLength = etUserBio.text!!.length
+
+            Log.d(TAG, "onViewCreated: char length: $charLength")
+            val newHint = if (charLength >= maxBioLength) {
+                getString(R.string.warning_max_length_bio, maxBioLength)
+            } else {
+                getString(R.string.bio)
+            }
+            view.findViewById<TextInputLayout>(R.id.etUserBioLayout).hint = newHint
+        }
+
+        if (password != null) {
+            etPassword.isEnabled = true
+            etPassword.setText(password)
+            etConfirmPassword.setText(password)
+            etConfirmPassword.isEnabled = true
+
+            buttonShowPassword.visibility = View.GONE
+        } else {
+            etPassword.setText("******")
+            etConfirmPassword.setText("******")
+        }
+    }
+
+    private fun loadContent() {
+        showDataLoading()
         Firebase.firestore.collection("users")
             .document(firebaseUser.uid)
             .get()
@@ -141,18 +171,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-        if (password != null) {
-            etPassword.isEnabled = true
-            etPassword.setText(password)
-            etConfirmPassword.setText(password)
-            etConfirmPassword.isEnabled = true
-
-            buttonShowPassword.visibility = View.GONE
-        } else {
-            etPassword.setText("******")
-            etConfirmPassword.setText("******")
-        }
     }
 
     //result of obtaining permission code

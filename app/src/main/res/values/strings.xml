@@ -53,7 +53,9 @@
     <string name="send_email">Send Email</string>
     <string name="confirm">Confirm</string>
     <string name="show_password">Show Password</string>
-    <string name="bio">Enter User Bio</string>
+    <string name="enter_bio">Enter User Bio</string>
+    <string name="bio">Bio</string>
     <string name="profile">Profile</string>
     <string name="sample_unread_messages_count">14</string>
+    <string name="warning_max_length_bio">Bio max limit is %d characters</string>
 </resources>
