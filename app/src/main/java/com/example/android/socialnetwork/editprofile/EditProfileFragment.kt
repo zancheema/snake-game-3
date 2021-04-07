@@ -130,11 +130,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
                 serverFileUri = Uri.parse(user.photoUrl)
                 if (serverFileUri != null) {
-                    Glide.with(this)
-                        .load(serverFileUri)
-                        .placeholder(R.drawable.ic_baseline_person_24)
-                        .error(R.drawable.ic_baseline_person_24)
-                        .into(ivProfilePic)
+                    loadProfilePic(serverFileUri)
                 }
 
                 etUsername.setText(user.username)
@@ -181,12 +177,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             if (resultCode == Activity.RESULT_OK) {
                 localFileUri = data?.data!!
 //                ivProfilePic.setImageURI(localFileUri)
-                Glide
-                    .with(this)
-                    .load(localFileUri)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(ivProfilePic)
+                loadProfilePic(localFileUri)
             }
         }
     }
@@ -267,100 +258,117 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     //Remove the profile picture
     private fun removeProfilePicture() {
-        showDataLoading()
+        localFileUri = Uri.parse("")
+        loadProfilePic(localFileUri)
 
-        val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
-            .setDisplayName(etUsername.text.toString().trim())
-            .setPhotoUri(null)
-            .build()
+//        val request: UserProfileChangeRequest = UserProfileChangeRequest.Builder()
+//            .setDisplayName(etUsername.text.toString().trim())
+//            .setPhotoUri(null)
+//            .build()
+//
+//        firebaseUser.updateProfile(request)
+//            .addOnCompleteListener { task ->
+//                showContent()
+//
+//                if (task.isSuccessful) {
+//
+//                    val map = mapOf(
+//                        NodeNames.PHOTO to ""
+//                    )
+//                    usersCollection.document(firebaseUser.uid)
+//                        .update(map)
+//                        .addOnCompleteListener { task ->
+//                            if (task.isSuccessful) {
+//                                Toast.makeText(
+//                                    requireContext(),
+//                                    "Profile Photo Successfully Removed",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                                findNavController().popBackStack()
+//                            }
+//                        }
+//                }
+//            }
+    }
 
-        firebaseUser.updateProfile(request)
-            .addOnCompleteListener { task ->
-                showContent()
-
-                if (task.isSuccessful) {
-
-                    val map = mapOf(
-                        NodeNames.PHOTO to ""
-                    )
-                    usersCollection.document(firebaseUser.uid)
-                        .update(map)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Profile Photo Successfully Removed",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                findNavController().popBackStack()
-                            }
-                        }
-                }
-            }
+    private fun loadProfilePic(uri: Uri?) {
+        Glide
+            .with(this)
+            .load(uri)
+            .placeholder(R.drawable.ic_baseline_person_24)
+            .error(R.drawable.ic_baseline_person_24)
+            .into(ivProfilePic)
     }
 
     //Save username and profile photo information to firebase
     private fun updateNameAndProfilePhoto() {
         Log.d(TAG, "updateNameAndProfilePhoto: called")
 
-        val strFileName: String = firebaseUser.uid + ".jpg"
-
-        val fileReference: StorageReference = fileStorage.child("images/$strFileName")
-
         showDataLoading()
 
-        fileReference.putFile(localFileUri)
+        if (localFileUri.path.isNullOrBlank()) {
+            updateFirestore(Uri.parse(""))
+        } else {
+            val strFileName: String = firebaseUser.uid + ".jpg"
+            val fileReference: StorageReference = fileStorage.child("images/$strFileName")
+
+            fileReference.putFile(localFileUri)
+                .addOnCompleteListener { task ->
+                    showContent()
+
+                    if (task.isSuccessful) {
+                        updatePasswordIfRequired()
+
+                        fileReference.downloadUrl
+                            .addOnSuccessListener {
+                                updateFirestore(it)
+                            }
+                    }
+                }
+        }
+    }
+
+    private fun updateFirestore(it: Uri?) {
+        serverFileUri = it
+
+        val request: UserProfileChangeRequest =
+            UserProfileChangeRequest.Builder()
+                .setDisplayName(etUsername.text.toString().trim())
+                .setPhotoUri(serverFileUri)
+                .build()
+
+        firebaseUser.updateProfile(request)
             .addOnCompleteListener { task ->
-                showContent()
-
                 if (task.isSuccessful) {
-                    updatePasswordIfRequired()
 
-                    fileReference.downloadUrl
-                        .addOnSuccessListener {
-                            serverFileUri = it
-
-                            val request: UserProfileChangeRequest =
-                                UserProfileChangeRequest.Builder()
-                                    .setDisplayName(etUsername.text.toString().trim())
-                                    .setPhotoUri(serverFileUri)
-                                    .build()
-
-                            firebaseUser.updateProfile(request)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-
-                                        val map = mapOf(
-                                            NodeNames.USERNAME to etUsername.text.toString().trim(),
-                                            NodeNames.PHOTO to serverFileUri.toString(),
-                                            NodeNames.USER_BIO to etUserBio.text.toString()
-                                        )
-                                        usersCollection.document(firebaseUser.uid)
-                                            .update(map)
-                                            .addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-                                                    // requireContext() is prone to throwing exception
-                                                    // if the update is cancelled by user
-                                                    context?.let { ctx ->
-                                                        Toast.makeText(
-                                                            ctx,
-                                                            "The update was successful",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                        findNavController().popBackStack()
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }.addOnFailureListener { exception ->
+                    val map = mapOf(
+                        NodeNames.USERNAME to etUsername.text.toString().trim(),
+                        NodeNames.PHOTO to serverFileUri.toString(),
+                        NodeNames.USER_BIO to etUserBio.text.toString()
+                    )
+                    usersCollection.document(firebaseUser.uid)
+                        .update(map)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // requireContext() is prone to throwing exception
+                                // if the update is cancelled by user
+                                context?.let { ctx ->
                                     Toast.makeText(
-                                        requireContext(),
-                                        "Update Failed: ${exception.localizedMessage}",
-                                        Toast.LENGTH_LONG
+                                        ctx,
+                                        "The update was successful",
+                                        Toast.LENGTH_SHORT
                                     ).show()
+                                    findNavController().popBackStack()
                                 }
+                            }
                         }
                 }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(
+                    requireContext(),
+                    "Update Failed: ${exception.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
     }
 
