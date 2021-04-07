@@ -75,31 +75,31 @@
                 android:id="@+id/grayscale"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/grayscale" />
+                app:srcCompat="@mipmap/grayscale" />
 
             <ImageView
                 android:id="@+id/hue"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/hue" />
+                app:srcCompat="@mipmap/hue" />
 
             <ImageView
                 android:id="@+id/blackAndWhite"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/black_and_white" />
+                app:srcCompat="@mipmap/black_and_white" />
 
             <ImageView
                 android:id="@+id/documentary"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/documentary" />
+                app:srcCompat="@mipmap/documentary" />
 
             <ImageView
                 android:id="@+id/temperature"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/temperature" />
+                app:srcCompat="@mipmap/temperature" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

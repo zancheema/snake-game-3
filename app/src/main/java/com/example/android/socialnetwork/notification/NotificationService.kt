@@ -50,7 +50,7 @@ class NotificationService : FirebaseMessagingService() {
 
         val nBuilder = NotificationCompat.Builder(this, Constants.CHANNEL_ID)
         nBuilder.apply {
-            setSmallIcon(R.drawable.app_logo)
+            setSmallIcon(R.drawable.ic_app_logo)
             color = ContextCompat.getColor(this@NotificationService, R.color.theme_blue)
             setContentTitle(title)
             setContentText(content)
