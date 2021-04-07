@@ -44,7 +44,7 @@ class ReAuthFragment : Fragment(R.layout.fragment_re_auth) {
                 .addOnFailureListener {
                     Toast.makeText(
                         context,
-                        "an error has occurred",
+                        it.localizedMessage,
                         Toast.LENGTH_SHORT
                     )
                         .show()

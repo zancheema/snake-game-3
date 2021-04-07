@@ -113,7 +113,7 @@ class ChatFragment : Fragment() {
                 if (error != null) {
                     Toast.makeText(
                         context,
-                        "an error has occurred",
+                        error.localizedMessage,
                         Toast.LENGTH_SHORT
                     )
                         .show()

@@ -41,7 +41,7 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
                     content.visibility = View.VISIBLE
                     Toast.makeText(
                         context,
-                        "an error has occurred",
+                        it.localizedMessage,
                         Toast.LENGTH_SHORT
                     ).show()
                 }

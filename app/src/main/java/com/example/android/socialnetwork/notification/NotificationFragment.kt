@@ -94,7 +94,7 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                             }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
                     }
             }
     }
@@ -118,10 +118,10 @@ class NotificationFragment : Fragment(), NotificationListAdapter.FriendRequestLi
                 notifications.sortByDescending { it.timestamp }
                 notificationListAdapter.submitList(notifications)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Toast.makeText(
                     context,
-                    "an error has occurred",
+                    it.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }

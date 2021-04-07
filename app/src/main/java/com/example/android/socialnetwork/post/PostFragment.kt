@@ -108,7 +108,7 @@ class PostFragment : Fragment() {
                         findNavController().popBackStack()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_SHORT)
                             .show()
                         findNavController().popBackStack()
                     }
@@ -116,14 +116,14 @@ class PostFragment : Fragment() {
             }.addOnFailureListener {
                 Toast.makeText(
                     requireContext(),
-                    "an error has occurred",
+                    it.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
                 findNavController().popBackStack()
             }
 
         }.addOnFailureListener {
-            Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_LONG)
+            Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG)
                 .show()
             findNavController().popBackStack()
         }

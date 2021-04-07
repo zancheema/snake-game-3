@@ -107,6 +107,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
 
             override fun onError(error: FacebookException) {
+                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "facebook:onError", error)
             }
         })
@@ -188,7 +189,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     showContent()
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(
-                        context, "an error has occurred",
+                        context, task.exception?.localizedMessage,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -208,7 +209,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 showContent()
                 Toast.makeText(
                     requireContext(),
-                    "an error has occurred",
+                    it.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
                 Log.w(TAG, "signInWithCredential:failure", it)
@@ -268,7 +269,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         showContent()
                         Toast.makeText(
                             requireContext(),
-                            "an error has occurred",
+                            it.localizedMessage,
                             Toast.LENGTH_SHORT
                         )
                             .show()

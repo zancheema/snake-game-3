@@ -90,7 +90,7 @@ class HomeFragment : Fragment() {
                 postFeedAdapter.submitList(posts)
             }
             .addOnFailureListener { exc ->
-                Toast.makeText(context, "an error has occurred", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, exc.localizedMessage, Toast.LENGTH_SHORT).show()
             }
     }
 

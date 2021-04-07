@@ -60,7 +60,7 @@ class ProfileFragment : Fragment() {
                     .into(ivProfilePic)
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "an error has occurred", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_SHORT).show()
             }
 
         buttonLogout.setOnClickListener {

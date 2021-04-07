@@ -193,7 +193,7 @@ class SignUpFragment : Fragment() {
                 }.addOnFailureListener {
                     Toast.makeText(
                         requireContext(),
-                        "an error has occurred",
+                        it.localizedMessage,
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -253,7 +253,7 @@ class SignUpFragment : Fragment() {
                                             .addOnFailureListener {
                                                 Toast.makeText(
                                                     requireContext(),
-                                                    "an error has occurred",
+                                                    it.localizedMessage,
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -261,7 +261,7 @@ class SignUpFragment : Fragment() {
                                 }.addOnFailureListener {
                                     Toast.makeText(
                                         requireContext(),
-                                        "an error has occurred",
+                                        it.localizedMessage,
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -308,7 +308,7 @@ class SignUpFragment : Fragment() {
                         .addOnFailureListener {
                             Toast.makeText(
                                 requireContext(),
-                                "an error has occurred",
+                                it.localizedMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -316,7 +316,7 @@ class SignUpFragment : Fragment() {
             }.addOnFailureListener {
                 Toast.makeText(
                     requireContext(),
-                    "an error has occurred",
+                    it.localizedMessage,
                     Toast.LENGTH_LONG
                 ).show()
             }

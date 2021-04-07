@@ -110,7 +110,7 @@ class OtherProfileFragment : Fragment() {
                                         .addOnFailureListener {
                                             Toast.makeText(
                                                 context,
-                                                "an error has occurred",
+                                                it.localizedMessage,
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }

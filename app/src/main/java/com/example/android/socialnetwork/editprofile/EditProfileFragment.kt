@@ -173,7 +173,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 showContent()
                 Toast.makeText(
                     requireContext(),
-                    "an error has occurred",
+                    it.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }
