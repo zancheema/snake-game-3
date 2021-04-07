@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
+import com.example.android.socialnetwork.model.User
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,12 +24,21 @@ class ChatsListAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(chat: Chat, onClick: (Chat) -> Unit) {
             itemView.apply {
-                Glide
-                    .with(itemView.context)
-                    .load(chat.photoUrl)
-                    .placeholder(R.drawable.ic_baseline_person_24)
-                    .error(R.drawable.ic_baseline_person_24)
-                    .into(findViewById(R.id.ivProfilePic))
+                Firebase.firestore
+                    .collection("users")
+                    .document(Firebase.auth.currentUser.uid)
+                    .collection("chats")
+                    .document(chat.userUid)
+                    .get()
+                    .addOnSuccessListener { snap ->
+                        val user = snap.toObject(User::class.java)!!
+                        Glide
+                            .with(itemView.context)
+                            .load(user.photoUrl)
+                            .placeholder(R.drawable.ic_baseline_person_24)
+                            .error(R.drawable.ic_baseline_person_24)
+                            .into(findViewById(R.id.ivProfilePic))
+                    }
 
                 findViewById<TextView>(R.id.tvUsername).text = chat.username
 
