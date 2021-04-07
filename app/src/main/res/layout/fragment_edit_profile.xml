@@ -137,7 +137,6 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:text="@string/sample_password" />
@@ -161,7 +160,6 @@
                 android:id="@+id/etConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
                 android:hint="@string/confirm_password"
                 android:inputType="textPassword"
                 android:text="@string/sample_password" />
@@ -188,17 +186,6 @@
                 tools:text="@string/dummy_paragraph" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buttonShowPassword"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/button_red_bg"
-            android:text="@string/show_password"
-            app:layout_constraintEnd_toEndOf="@+id/buttonSaveChanges"
-            app:layout_constraintStart_toStartOf="@+id/buttonSaveChanges"
-            app:layout_constraintTop_toBottomOf="@+id/buttonSaveChanges" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSaveChanges"

@@ -33,16 +33,18 @@ private const val TAG = "EditProfileFragment"
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
+    private lateinit var etUserBioLayout: TextInputLayout
     private lateinit var etUsername: TextInputEditText
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
+    private lateinit var etPasswordLayout: TextInputLayout
     private lateinit var etConfirmPassword: TextInputEditText
+    private lateinit var etConfirmPasswordLayout: TextInputLayout
     private lateinit var etUserBio: TextInputEditText
     private lateinit var ivProfilePic: ImageView
     private lateinit var buttonLogout: ImageButton
     private lateinit var changePictureButton: Button
     private lateinit var saveChangesButton: Button
-    private lateinit var buttonShowPassword: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var content: View
 
@@ -77,15 +79,17 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         etUsername = view.findViewById(R.id.etPostTitle)
         etEmail = view.findViewById(R.id.etEmail)
         etPassword = view.findViewById(R.id.etPassword)
+        etPasswordLayout = view.findViewById(R.id.etPasswordLayout)
         etConfirmPassword = view.findViewById(R.id.etConfirmPassword)
+        etConfirmPasswordLayout = view.findViewById(R.id.etConfirmPasswordLayout)
         etUserBio = view.findViewById(R.id.etUserBio)
         ivProfilePic = view.findViewById(R.id.ivProfilePic)
         buttonLogout = view.findViewById(R.id.buttonLogout)
         changePictureButton = view.findViewById(R.id.buttonChangePicture)
         saveChangesButton = view.findViewById(R.id.buttonSaveChanges)
-        buttonShowPassword = view.findViewById(R.id.buttonShowPassword)
         progressBar = view.findViewById(R.id.progressBar)
         content = view.findViewById(R.id.content)
+        etUserBioLayout = view.findViewById(R.id.etUserBioLayout)
 
         mAuth = FirebaseAuth.getInstance()
         firebaseUser = mAuth.currentUser!!
@@ -104,19 +108,36 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             } else {
                 getString(R.string.bio)
             }
-            view.findViewById<TextInputLayout>(R.id.etUserBioLayout).hint = newHint
+            etUserBioLayout.hint = newHint
         }
+        setUpPasswordInputLayout(etPasswordLayout, etPassword, password)
+        setUpPasswordInputLayout(etConfirmPasswordLayout, etConfirmPassword, password)
+    }
 
-        if (password != null) {
-            etPassword.isEnabled = true
-            etPassword.setText(password)
-            etConfirmPassword.setText(password)
-            etConfirmPassword.isEnabled = true
-
-            buttonShowPassword.visibility = View.GONE
+    private fun setUpPasswordInputLayout(
+        parent: TextInputLayout,
+        child: TextInputEditText,
+        password: String?
+    ) {
+        if (password == null) {
+            parent.setEndIconOnClickListener {
+                if (user.email.isNotBlank()) {
+                    findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Password can be only changed for email login",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            child.apply {
+                setText("******")
+                isFocusable = false
+                isClickable = true
+            }
         } else {
-            etPassword.setText("******")
-            etConfirmPassword.setText("******")
+            child.setText(password)
         }
     }
 
@@ -145,17 +166,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
                 saveChangesButton.setOnClickListener {
                     saveChanges()
-                }
-                buttonShowPassword.setOnClickListener {
-                    if (user.email.isNotBlank()) {
-                        findNavController().navigate(R.id.action_editProfileFragment_to_reAuthFragment)
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Password can be only changed for email login",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
                 }
                 showContent()
             }
