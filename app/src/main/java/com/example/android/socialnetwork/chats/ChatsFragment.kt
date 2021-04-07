@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.socialnetwork.R
 import com.example.android.socialnetwork.model.Chat
+import com.example.android.socialnetwork.model.TotalUnreadMessages
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -25,6 +26,19 @@ class ChatsFragment : Fragment() {
         .collection("users")
         .document(Firebase.auth.currentUser!!.uid)
         .collection("chats")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val unreadMessages = TotalUnreadMessages(0)
+        // set unread messages count to zero once chats are opened
+        Firebase.firestore
+            .collection("users")
+            .document(Firebase.auth.currentUser!!.uid)
+            .collection("chatFunctions")
+            .document("unreadMessages")
+            .set(unreadMessages)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

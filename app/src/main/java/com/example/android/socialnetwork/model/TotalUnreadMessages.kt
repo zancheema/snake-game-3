@@ -1,5 +1,5 @@
 package com.example.android.socialnetwork.model
 
-class TotalUnreadMessages {
+data class TotalUnreadMessages(
     val totalCount: Int = 0
-}
+)
